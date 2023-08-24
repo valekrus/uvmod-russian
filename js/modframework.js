@@ -289,7 +289,7 @@ function addInputField(parentDiv, labelText, defaultValue) {
     inputGroup.appendChild(inputGroupApp);
   }
 
-  parentDiv.appendChild(formGroup);
+  parentDiv.appendChild(inputGroup);
 
   return input; // Return the input element
 }
