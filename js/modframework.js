@@ -307,3 +307,67 @@ function addRadioButton(parentDiv, labelText, id, name) {
 
   return inputElement;
 }
+
+/**
+ * Adds two input fields to a parent div with an inline label and default text.
+ *
+ * @param {HTMLElement} parentDiv - The parent div to which the input field will be added. Usually this.modSpecificDiv
+ * @param [{string},{string},{string}] labelText - The array with label text (title) for the left, center and right label.
+ * @param {string} defaultText1 - The default text to pre-fill the first input field with.
+ * @param {string} defaultText2 - The default text to pre-fill the second input field with.
+ * @returns [{HTMLInputElement}, {HTMLInputElement}] - The array of created input elements, assign it to a constant for later use.
+ */
+function addTwoInputFields(parentDiv, labelText, defaultValue1, defaultValue2) {
+  const inputGroup = document.createElement("div");
+  inputGroup.classList.add("input-group");
+
+  if (labelText[0] != null) {
+    const inputGroupPre = document.createElement("div");
+    inputGroupPre.classList.add("input-group-prepend");
+
+    const labell = document.createElement("span");
+    labell.classList.add("input-group-text");
+    labell.innerText = labelText[0];
+    inputGroupPre.appendChild(labell);
+    inputGroup.appendChild(inputGroupPre);
+  }
+
+  const input1 = document.createElement("input");
+  input1.classList.add("form-control");
+  input1.type = "text";
+  input1.value = defaultValue1; // Set the default value for first element
+  inputGroup.appendChild(input1);
+
+  if (labelText[1] != null) {
+    const inputGroupMid = document.createElement("div");
+    inputGroupMid.classList.add("input-group-prepend", "input-group-append");
+
+    const labelc = document.createElement("span");
+    labelc.classList.add("input-group-text");
+    labelc.innerText = labelText[1];
+    inputGroupMid.appendChild(labelc);
+    inputGroup.appendChild(inputGroupMid);
+  }
+
+
+  const input2 = document.createElement("input");
+  input2.classList.add("form-control");
+  input2.type = "text";
+  input2.value = defaultValue2; // Set the default value for second element
+  inputGroup.appendChild(input2);
+
+  if (labelText[2] != null) {
+    const inputGroupApp = document.createElement("div");
+    inputGroupApp.classList.add("input-group-append");
+
+    const labelr = document.createElement("span");
+    labelr.classList.add("input-group-text");
+    labelr.innerText = labelText[2];
+    inputGroupApp.appendChild(labelr);
+    inputGroup.appendChild(inputGroupApp);
+  }
+
+  parentDiv.appendChild(inputGroup);
+
+  return [input1, input2]; // Return the input element
+}
