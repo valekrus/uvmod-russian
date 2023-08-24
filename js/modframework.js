@@ -253,23 +253,41 @@ function compareSection(array, section, offset) {
  * Adds an input field to a parent div with a label and default text.
  *
  * @param {HTMLElement} parentDiv - The parent div to which the input field will be added. Usually this.modSpecificDiv
- * @param {string} labelText - The label text (title) for the input field.
+ * @param [{string},{string}] labelText - The array with label text (title) for the left and right label.
  * @param {string} defaultText - The default text to pre-fill the input field with.
  * @returns {HTMLInputElement} - The created input element, assign it to a constant for later use. 
  */
 function addInputField(parentDiv, labelText, defaultValue) {
-  const formGroup = document.createElement("div");
-  formGroup.classList.add("form-group");
+  const inputGroup = document.createElement("div");
+  inputGroup.classList.add("input-group");
 
-  const label = document.createElement("label");
-  label.textContent = labelText;
-  formGroup.appendChild(label);
+  if (labelText[0] != null) {
+    const inputGroupPre = document.createElement("div");
+    inputGroupPre.classList.add("input-group-prepend");
+
+    const labell = document.createElement("span");
+    labell.classList.add("input-group-text");
+    labell.innerText = labelText[0];
+    inputGroupPre.appendChild(labell);
+    inputGroup.appendChild(inputGroupPre);
+  }
 
   const input = document.createElement("input");
   input.classList.add("form-control");
   input.type = "text";
   input.value = defaultValue; // Set the default value
-  formGroup.appendChild(input);
+  inputGroup.appendChild(input);
+
+  if (labelText[1] != null) {
+    const inputGroupApp = document.createElement("div");
+    inputGroupApp.classList.add("input-group-append");
+
+    const labelr = document.createElement("span");
+    labelr.classList.add("input-group-text");
+    labelr.innerText = labelText[2];
+    inputGroupApp.appendChild(labelr);
+    inputGroup.appendChild(inputGroupApp);
+  }
 
   parentDiv.appendChild(formGroup);
 
