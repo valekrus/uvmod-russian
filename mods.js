@@ -136,7 +136,7 @@ modClasses = [
         constructor() {
             super("Контраст LCD", "Изменяет контраст LCD на любое значение от 0 до 63 (больше - темнее). Значение по умолчанию 31", 0);
 
-            this.contrastValue = addInputField(this.modSpecificDiv, "Укажите новое значение контраста в диапазоне 0-63:", "31");
+            this.contrastValue = addInputField(this.modSpecificDiv, ["Новое значение контраста, в диапазоне 0-63:"], "31");
         }
 
         apply(firmwareData) {
@@ -1365,8 +1365,8 @@ modClasses = [
     class Mod_RogerBeep extends FirmwareMod {
         constructor() {
             super("Roger Beep", "Изменяет тональность двух тонов подтверждения передачи. Первый тон звучит 150мс, второй - 80мс. По умолчанию мод звучит как у Mototrbo. максимальная частота 6347Гц.", 0);
-            this.inputTone1 = addInputField(this.modSpecificDiv, "Тон 1, частота (Гц)", "1540");
-            this.inputTone2 = addInputField(this.modSpecificDiv, "Тон 2, частота (Гц)", "1310");
+            this.inputTone1 = addInputField(this.modSpecificDiv, ["Тон 1, частота:","Гц"], "1540");
+            this.inputTone2 = addInputField(this.modSpecificDiv, ["Тон 2, частота:","Гц"], "1310");
         }
 
         apply(firmwareData) {
@@ -1404,7 +1404,7 @@ modClasses = [
     class Mod_ChangeToneBrust extends FirmwareMod {
         constructor() {
             super("Частота тонального сигнала", "В функциях кнопок есть отправка тонального сигнала для включения репитера с частотой 1750Гц. Здесь можно изменить частоту этого тона, например, на 1050Гц для активации фонового поиска для частот NOAA. Другие часто используемые частоты тональных сигналов для примера: 1000Гц, 1450Гц, 1750Гц, 2100Гц", 0);
-            this.toneValue = addInputField(this.modSpecificDiv, "Частота тонального сигнала в Гц, 1000-3950:", "1750");
+            this.toneValue = addInputField(this.modSpecificDiv, ["Частота тонального сигнала, 1000-3950:", "Гц"], "1750");
         }
 
         apply(firmwareData) {
@@ -1705,13 +1705,13 @@ modClasses = [
     class Mod_FrequencySteps extends FirmwareMod {
         constructor() {
             super("Шаг перестройки частоты", "Изменить доступные в меню шаги чатоты.", 0);
-            this.inputStep1 = addInputField(this.modSpecificDiv, "Шаг 1 (Гц)", "2500");
-            this.inputStep2 = addInputField(this.modSpecificDiv, "Шаг 2 (Гц)", "5000");
-            this.inputStep3 = addInputField(this.modSpecificDiv, "Шаг 3 (Гц)", "6250");
-            this.inputStep4 = addInputField(this.modSpecificDiv, "Шаг 4 (Гц)", "10000");
-            this.inputStep5 = addInputField(this.modSpecificDiv, "Шаг 5 (Гц)", "12500");
-            this.inputStep6 = addInputField(this.modSpecificDiv, "Шаг 6 (Гц)", "25000");
-            this.inputStep7 = addInputField(this.modSpecificDiv, "Шаг 7 (Гц) (доступен только на втором диапазоне)", "8330");
+            this.inputStep1 = addInputField(this.modSpecificDiv, ["Шаг 1", "Гц"], "2500");
+            this.inputStep2 = addInputField(this.modSpecificDiv, ["Шаг 2", "Гц"], "5000");
+            this.inputStep3 = addInputField(this.modSpecificDiv, ["Шаг 3", "Гц"], "6250");
+            this.inputStep4 = addInputField(this.modSpecificDiv, ["Шаг 4", "Гц"], "10000");
+            this.inputStep5 = addInputField(this.modSpecificDiv, ["Шаг 5", "Гц"], "12500");
+            this.inputStep6 = addInputField(this.modSpecificDiv, ["Шаг 6", "Гц"], "25000");
+            this.inputStep7 = addInputField(this.modSpecificDiv, ["Шаг 7 (доступен только на втором диапазоне)", "Гц"], "8330");
         }
 
         apply(firmwareData) {
@@ -1750,16 +1750,16 @@ modClasses = [
     class Mod_NOAAFrequencies extends FirmwareMod {
         constructor() {
             super("Частоты NOAA", "Функция сканирования частот NOAA уникальна, поскольку сканирование может происходить в фоне, постоянно. Тем не менее большинству не требуются эти предупреждения о погоде, поскольку эта служба не работает в их стране. Этот мод позволяет изменить чсатоты чтобы использовать данную функцию для сканирования чего-то другого. Однако, стоит иметь в виду, что для открытия шумодава необходим тон 1050Гц. Значения ниже предустановлены на первые 10 PMR446 каналов. ", 0);
-            this.inputFreq1 = addInputField(this.modSpecificDiv,   "Канал 1 (Гц)", "446006250");
-            this.inputFreq2 = addInputField(this.modSpecificDiv,   "Канал 2 (Гц)", "446018750");
-            this.inputFreq3 = addInputField(this.modSpecificDiv,   "Канал 3 (Гц)", "446031250");
-            this.inputFreq4 = addInputField(this.modSpecificDiv,   "Канал 4 (Гц)", "446043750");
-            this.inputFreq5 = addInputField(this.modSpecificDiv,   "Канал 5 (Гц)", "446056250");
-            this.inputFreq6 = addInputField(this.modSpecificDiv,   "Канал 6 (Гц)", "446068750");
-            this.inputFreq7 = addInputField(this.modSpecificDiv,   "Канал 7 (Гц)", "446081250");
-            this.inputFreq8 = addInputField(this.modSpecificDiv,   "Канал 8 (Гц)", "446093750");
-            this.inputFreq9 = addInputField(this.modSpecificDiv,   "Канал 9 (Гц)", "446106250");
-            this.inputFreq10 = addInputField(this.modSpecificDiv,  "Канал 10 (Гц)", "446118750");
+            this.inputFreq1 = addInputField(this.modSpecificDiv,   ["Канал 1", "Гц"], "446006250");
+            this.inputFreq2 = addInputField(this.modSpecificDiv,   ["Канал 2", "Гц"], "446018750");
+            this.inputFreq3 = addInputField(this.modSpecificDiv,   ["Канал 3", "Гц"], "446031250");
+            this.inputFreq4 = addInputField(this.modSpecificDiv,   ["Канал 4", "Гц"], "446043750");
+            this.inputFreq5 = addInputField(this.modSpecificDiv,   ["Канал 5", "Гц"], "446056250");
+            this.inputFreq6 = addInputField(this.modSpecificDiv,   ["Канал 6", "Гц"], "446068750");
+            this.inputFreq7 = addInputField(this.modSpecificDiv,   ["Канал 7", "Гц"], "446081250");
+            this.inputFreq8 = addInputField(this.modSpecificDiv,   ["Канал 8", "Гц"], "446093750");
+            this.inputFreq9 = addInputField(this.modSpecificDiv,   ["Канал 9", "Гц"], "446106250");
+            this.inputFreq10 = addInputField(this.modSpecificDiv,  ["Канал 10", "Гц"], "446118750");
         }
 
         apply(firmwareData) {
@@ -1860,7 +1860,7 @@ modClasses = [
     class Mod_AirCopy extends FirmwareMod {
         constructor() {
             super("Частота AIR COPY", "Изменяет частоту, на которой производится беспроводное копирование настроек из одной рации в другую. По умолчанию - 410,025 МГц. Для включения режима AIR COPY рацию необходимо включить, зажав F2 [Фонарик] + PTT.", 0);
-            this.inputFreq1 = addInputField(this.modSpecificDiv, "Частота Air Copy (Гц)", "433600000");
+            this.inputFreq1 = addInputField(this.modSpecificDiv, ["Частота Air Copy", "Гц"], "433600000");
 
         }
 
