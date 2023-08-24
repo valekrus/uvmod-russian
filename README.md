@@ -1,40 +1,30 @@
-# [CLICK HERE TO OPEN UVMOD](https://whosmatt.github.io/uvmod/)
-## [中文版 Open Chinese Version (maintained independently)](https://uvmod.xanyi.eu.org/)
-## [Open Russian Version (maintained independently)](https://uvmod.valek.net.ru/)
-## [Open Portugese Version (maintained independently)](https://meshtastic.pt/QuanSheng/)
+# [Открыть UVMOD](https://uvmod.valek.net.ru/)
+## [Открыть оригинальный UVMOD (английский)](https://whosmatt.github.io/uvmod/)
+## [中文版 Открыть Китайскую версию (поддерживается отдельно)](https://uvmod.xanyi.eu.org/)
+## [Открыть Португальскую версию (поддерживается отдельно)](https://meshtastic.pt/QuanSheng/)
 
-### Info about v26/v27
+### Инфо по v26/v27
 
-UVMOD is based on v26 because the newer v27 firmware brings no important changes other than one small fix that only applies to a small number of units.  
-Depending on the factory calibration of some radios, the TX power above 435MHz can be lower than it should be due to a programming oversight.  
-v27 fixes this so that the TX power is always correct.
-To see if your unit is affected you can either use a power meter, or you can use a receiver with rssi to check if the output power on the L setting is higher than the output power on the H setting. 
+UVMOD основывается на v26, поскольку новая версия прошивки v27 не приносит никаких важных исправлений, кроме небольшого фикса, затрагивающего небольшое количество устройств.  
+В зависимости от заводской калибровки некоторых раций, мощность передачи выше 435МГц может быть ниже, чем должна быть из-за программной ошибки.  
+v27 исправляет этот момент так, что мощность более не проседает.
+Для проверки затрагивает ли вашу рацию эта проблема необходимо использовать измеритель мощности или другой приёмник с показателем RSSI. Если мощность в режиме L выше, чем
+мощность в режиме H то это именно эта проблема.
 
-For now, the russian and portugese version of UVMOD includes limited v27 support, so you can use those if your unit is affected.  
+На данный момент поддержка v27 есть только в Португальской и Русской версии UVMOD.  
 
-We are working on a mod that fixes this in v26 as well.  
+Оригинальные разработчики, также, работают над переносом фикса в v26.
 
 ## Introduction
 
-Web-based client-side Quansheng firmware patcher and Web Serial flasher written in Javascript and HTML using [Bootstrap 4.6.0](https://getbootstrap.com/docs/4.6/getting-started/introduction/), jQuery and parts of the [SB Admin 2 Theme](https://startbootstrap.com/theme/sb-admin-2).  
-It is based on the discoveries by the many contributors in the [uvmod-kitchen](https://github.com/amnemonic/Quansheng_UV-K5_Firmware/tree/main/uvmod_kitchen) and implements the same functionality in a modular and flexible javascript structure. 
+Веб-версия патчера прошивок от Quansheng и Веб-прошивальщик написанный на Javascript и HTML, используя [Bootstrap 4.6.0](https://getbootstrap.com/docs/4.6/getting-started/introduction/), jQuery и частично тему [SB Admin 2 Theme](https://startbootstrap.com/theme/sb-admin-2).  
+Основано на данных от множества людей [uvmod-kitchen](https://github.com/amnemonic/Quansheng_UV-K5_Firmware/tree/main/uvmod_kitchen) и воплощает ту же функциональность в модульном виде на javascript. 
 
-Visitors can generate a patched firmware image by selecting the desired patches. Patches modify the firmware on a binary level and can accept user input to customize variables. A custom base image can be supplied to allow support for mods that are compiled and linked directly into the firmware.  
-The generated firmware can be flashed directly to the radio with supported browsers, no external software is needed. 
+Посетители могут сгенерировать изменённую на основе выбранных патчей прошивку. Пачти изменяют прошивку в двоичном виде и могут настраиваться на основе запросов пользователя. Файл-основа для прошивки может быть использована своя для включения модов, которые уже вшиты в существующую прошивку.  
+Сгенерированная прошивка может быть сразу прошита, если используется поддерживаемый браузер. Дополнительное ПО не требуется. 
 
-## Mod development
+## Отношение к небезопасным клонам UVMOD
 
-Clone this repository and execute `python3 -m http.server` or `python -m http.server` in the root directory for an instant local web server, allowing easy testing.  
-Mods are defined in [mods.js](mods.js), with an example mod to outline the pattern.  
-Also __refer to the helper functions and documentation in__ [modframework.js](js/modframework.js).  
-
-The supported format for binary data is in the format of a hex string __without separators__. You can use find and replace to remove all `\x` from a regular hex string or directly export the correct format from a bytes object in python using `print(''.join('%02x'%i for i in BYTES_OBJECT))`.
-
-## Statement regarding dangerous clones of UVMOD
-
-The radio spectrum is used by many different people and organizations, some of which are very important to critical infrastructure. Modifying the firmware of a radio needs to be done with care and consideration for the consequences.  
-UVMOD makes it easy and accessible for anyone without any background knowledge to modify the firmware of their radio. __However, certain mods such as TX Unlock mods can not be used legally and safely without a certain amount of background knowledge because the behaviour of these mods is counterintuitive.__  
-UVMOD is designed to hide all high-risk mods behind a information section in the instructions to ensure that users are aware of the risks and consequences.  
-
-__Sadly, there has been one person who has cloned UVMOD and removed all of the safety precautions and warnings.__ The team behind UVMOD and the Quansheng modding scene do not condone this behavior and we strongly advise against using this clone.  
-__Use the links at the top of this file to access all approved versions.__
+Радиосвязь используется различными людьми и организациями, некоторые из которых важны для обеспечения критической инфраструктуры. Модификация прошивки должна производиться с пониманием и учётомвозможных последствий.  
+UVMOD позволяет легко и удобно каждому неподготовленному пользователю изменять прошивку собственной рации. __Однако, некоторые моды, такие как Разблокировка передачи везде, не могут быть использованы легально и безопасно при отсутствии определённых знаний и понимания принципов работы радио, ввиду контринтуитивного поведения в результате.__  
+UVMOD скрывает опасные моды в информационном разделе инструкции, чтобы убедиться, что пользователь был предупреждён о возможных последствиях.  
