@@ -284,7 +284,7 @@ function addInputField(parentDiv, labelText, defaultValue) {
 
     const labelr = document.createElement("span");
     labelr.classList.add("input-group-text");
-    labelr.innerText = labelText[2];
+    labelr.innerText = labelText[1];
     inputGroupApp.appendChild(labelr);
     inputGroup.appendChild(inputGroupApp);
   }
