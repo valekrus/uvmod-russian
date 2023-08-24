@@ -104,7 +104,7 @@ modClasses = [
                 firmwareData = replaceSection(firmwareData, hexString("11E7000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000F5E7"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataAMTX, firmwareData.length);
 
-                log(`Успешно применён: ${this.name}. Добавлен пинпонг. Использовано ${dataAMTX.length/2} байт(а) дополнительно.`);
+                log(`Успешно применён: ${this.name}. Добавлен AM TX. Использовано ${dataAMTX.length/2} байт(а) дополнительно.`);
             }
 
             return firmwareData;
@@ -1423,7 +1423,7 @@ modClasses = [
     class Mod_ChangeToneBrust extends FirmwareMod {
         constructor() {
             super("Частота тонального сигнала", "В функциях кнопок есть отправка тонального сигнала для включения репитера с частотой 1750Гц. Здесь можно изменить частоту этого тона, например, на 1050Гц для активации фонового поиска для частот NOAA. Другие часто используемые частоты тональных сигналов для примера: 1000Гц, 1450Гц, 1750Гц, 2100Гц", 0);
-            this.toneValue = addInputField(this.modSpecificDiv, ["Частота тонального сигнала, 1000-3950:", "Гц"], "1750");
+            this.toneValue = addInputField(this.modSpecificDiv, ["Частота, 1000-3950:", "Гц"], "1750");
         }
 
         apply(firmwareData) {
