@@ -1,17 +1,18 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:title" content=UVMOD - Online Quansheng Firmware Patcher>
+  <meta property="og:title" content="UVMOD - онлайн модификатор прошивок раций Quansheng">
   <meta property="og:site_name" content=UVMOD>
-  <meta property="og:url" content=https://whosmatt.github.io/uvmod />
+  <meta property="og:url" content=https://uvmod.valek.net.ru/v26/ />
   <meta property="og:description"
-    content="Web-based tool to generate and flash customizable modded firmware for various Quansheng handheld radios.">
+    content="Веб-сервис генерации кастомизированных прошивок для различных носимых раций Quansheng.">
   <meta property="og:type" content=website>
-  <meta property="og:image" content=https://whosmatt.github.io/uvmod/img/banner.webp>
+  <meta property="og:image" content=img/banner.webp>
 
   <title>UVMOD</title>
 
@@ -86,7 +87,7 @@
       }
     }
 
-    #content {
+    #content-wrapper {
       animation: fadeInFromBottom 0.7s ease-out;
     }
 
@@ -113,10 +114,6 @@
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column" style="background-color: inherit;">
 
-      <div class="d-block px-2 py-2 text-center text-bold bg-danger">
-        <a href="https://github.com/whosmatt/uvmod#statement-regarding-dangerous-clones-of-uvmod" class="text-white">Warning: There are unauthorized clones of UVMOD designed with no regards for safety. Only use the original repository for the correct links! Click to learn more.</a>
-      </div>
-
       <!-- Main Content -->
       <div id="content">
 
@@ -128,90 +125,94 @@
             <h1 id="logo" class="h3 mb-0 text-white" style="text-shadow: 0px 0px 5px #ffffffa6; font-size: 3em;">UVMOD
             </h1>
             <button class="d-sm-inline-block btn btn-sm btn-light shadow-lg" type="button" data-toggle="collapse"
-              data-target="#instructions">&nbsp;Show Instructions&nbsp;</button>
+              data-target="#instructions">&nbsp;Инструкция&nbsp;</button>
           </div>
 
           <div id="instructions" class="row collapse">
             <div class="col-lg-12">
               <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Instructions</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Инструкция</h6>
                 </div>
                 <div class="card-body">
                   <h2 class="mb-4">UVMOD</h2>
-                  <p>This tool lets you create customized firmware for the Quansheng UV-K5, UV-K6, UV-K5(8), and UV-5R
-                    Plus handheld radios. To flash the firmware, you need a compatible programming cable and the
-                    necessary drivers.</p>
+                  <p>Эта страничка позволит вам собрать кастомизированную прошивку для Quansheng UV-K5, UV-K6, UV-K5(8),
+                     и UV-5R Plus. Для прошивки потребуется кабель для связи с рацией и установленные для него драйвера.</p>
 
-                  <h3 class="mt-4">Usage</h3>
+                  <h3 class="mt-4">Использование</h3>
                   <ol>
-                    <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage
-                      instructions.</li>
-                    <li>On the right side, you can select your radio model, but you can also leave it on "Patch for all
-                      radios", which creates a universal firmware that bypasses the version check. </li>
-                    <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you
-                      get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
-                    <li>Click "Save" to download the finished firmware file.</li>
+                    <li>Выберите нужные модификации и настройте их, при необходимости. В описании каждому моду есть
+                      подробности о настройке.</li>
+                    <li>В правой части страницы выберите соответствующую модель вашей рации. Программа для прошивки не
+                      даст прошить, если будет выбрана не та модель. Также вы можете оставить вариант по умолчанию
+                      "Для всех раций", который позволяет создать прошивку, которая будет принята любой моделью.</li>
+                    <li>Нажмите "Собрать" и в окне консоли отобразится размер прошивки при успешной сборке, а также
+                      ошибки, если они возникнут. Если возникает ошибка по превышению размера - стоит отключить некоторые
+                      модификации, чтобы освободить место, и попытаться ещё раз.</li>
+                    <li>Нажмите "Скачать" чтобы скачать файл с собранной прошивкой.</li>
                   </ol>
 
-                  <h3 class="mt-4">Flashing directly with UVMOD</h3>
-                  <p>Modern Chromium-based browsers such as Chrome, Edge, and Opera have a built-in API
-                    that allows UVMOD to flash the firmware directly to the radio. This is the easiest way to flash the
-                    firmware, but it only works on Windows and Linux.</p>
-                  <p>On Windows, you need the driver for the
-                    programming cable. Typically these cables use ch340, ch341 or cp210x chips. On linux, the driver is
-                    usually included. </p>
+                  <h3 class="mt-4">Пришивка при помощи UVMOD</h3>
+                  <p>Современные браузеры на основе Chromium, такие как Chrome, Edge, Opera и Яндекс.Браузер имеют API,
+                   который позволяет UVMOD прошить вашу рацию прямо из браузера. Это самый простой способ прошики,
+                   который, однако, работает только в Windows и Linux.</p>
+                  <p>Для Windows, вам необходим установленный драйвер для вашего кабеля. Обычно кабель использует ch340,
+                   ch341 или cp210x. В Linux драйвер, скорее всего, уже присутствует. </p>
                   <ol>
-                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. It should show up as a com port.</li>
-                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and
-                      turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the
-                      radio stays dark. Your radio is now in bootloader mode.</li>
-                    <li>Connect the programming cable to the radio.</li>
-                    <li>Click "Flash directly" and wait for the process to finish. You can watch progress in the console. </li>
-                    <li>All done, all your settings should still all be intact.</li>
+                    <li>Подключите кабель к компьютеру и убедитесь, что на него установлены корректные драйвера. Он
+                      должен определиться как COM-порт.</li>
+                    <li>На рации (которая всё ещё отключена от кабеля и выключена) зажмите кнопку PTT (кнопка передачи,
+                      большая кнопка сбоку) и не отпуская её включите рацию. Должен загореться светодиод фонарика, а
+                      на экране не будет ничего отображаться. Теперь рация в режиме обновления.</li>
+                    <li>Подключите кабель к рации (до конца, на новых рациях кабель может входить достаточно туго). На
+                      рации загорится синий светодиод.</li>
+                    <li>Нажмите "Прошить" и ожидайте завершения процесса. Прогресс прошивки отображается в консоли. </li>
+                    <li>Готово, прошивка обновлена. После прошивки настройки рации НЕ сбрасываются автоматически.</li>
                   </ol>
 
-                  <h3 class="mt-4">Flashing with the official software</h3>
-                  <p>If you use Windows, you can use the official updater tool. You can download it directly from UVMOD
-                    using the link in the console window.</p>
+                  <h3 class="mt-4">Прошивка официальным ПО</h3>
+                  <p>При использовании Windows, вы можете воспользоваться официальной программой для прошивки. Её можно
+                    скачать с этого сайта по ссылке в окне консоли.</p>
                   <ol>
-                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. In
-                      the device manager, it should show up as a com port.</li>
-                    <li>Start the updater tool, select the com port, and click connect.</li>
-                    <li>Load the customized firmware as the program file.</li>
-                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and
-                      turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the
-                      radio stays dark. Your radio is now in bootloader mode.</li>
-                    <li>Connect the programming cable to the radio. The "Update" button in the updater tool should now
-                      become available.</li>
-                    <li>Click update and wait for the tool to finish.</li>
-                    <li>All done, all your settings should still all be intact.</li>
+                    <li>Подключите кабель к компьютеру и убедитесь, что на него установлены корректные драйвера. В
+                      менеджере устройств он будет отображаться в секции "Порты (COM и LPT)" как COM-порт.</li>
+                    <li>Запустите программу для прошивки, выберите соответствующий COM-порт и нажмите "Connect".</li>
+                    <li>Укажите файл с прошивкой в поле "Program file".</li>
+                    <li>На рации (которая всё ещё отключена от кабеля и выключена) зажмите кнопку PTT (кнопка передачи,
+                      большая кнопка сбоку) и не отпуская её включите рацию. Должен загореться светодиод фонарика, а
+                      на экране не будет ничего отображаться. Теперь рация в режиме обновления.</li>
+                    <li>Подключите кабель к рации (до конца, на новых рациях кабель может входить достаточно туго).
+                      Кнопка "Update" в программе для прошивке станет доступной, а на рации загорится синий светодиод.</li>
+                    <li>Нажмите на кнопку "Update" и ждите завершения процесса. В процессе фонарик и синий светодиод
+                      могут моргать, это нормально.</li>
+                    <li>Готово, прошивка обновлена. После прошивки настройки рации НЕ сбрасываются автоматически.</li>
                   </ol>
-                  <h3 class="mt-4">Hidden Mods</h3>
-                  <p>There are some mods that are not listed in the mod list for safety reasons, which can be enabled
-                    here. Please consider the following warnings:</p>
+                  <h3 class="mt-4">Скрытые модификации</h3>
+                  <p>Некоторые моды не отображаются в списке по умолчанию по причине небезопасности их использования.
+                    Их можно включить здесь. Пожалуйста, обратите внимание на следующие ВАЖНЫЕ моменты:</p>
                   <ul>
-                    <li><b>ONLY USE TX MODS IF YOU UNDERSTAND THE CONCEPT OF HARMONICS, AND HAVE THE EQUIPMENT TO
-                        APPROPRIATELY FILTER THEM!</b></li>
-                    <li><b>DO NOT - UNDER ANY CIRCUMSTANCES - TRANSMIT ON THE AIR BAND OR INTEFERE WITH OTHER CRITICAL
-                        INFRASTRUCTURE!</b></li>
-                    <li>Transmitting on illegal frequencies can result in heavy fines or even jail time.</li>
-                    <li>The radio hardware is only designed for VHF and UHF, poorly so. Enabling TX on other frequencies
-                      does not change that fact.
-                      On frequencies outside of the VHF and UHF bands, the radio will have a very low output power and a
-                      very high SWR, which can damage the radio.
-                      Even worse, the radio will output a LOT of harmonics, on the outer parts of the spectrum, the
-                      harmonics even get stronger than the carrier signal.
-                      <b>For example, transmitting on CB bands will transmit useless amounts of power on CB
-                        (microwatts), while emitting significant amounts of power on several other frequencies, many of which are illegal to transmit on.</b>
+                    <li><b>Используйте моды на расширение частот передачи только если понимаете что такое гармоники, а
+                         также имеете оборудование для фильтрации нежелательных гармоник!</b></li>
+                    <li><b>Ни в коем случае не выходите на передачу на авиачастотах или не мешайте работе другого
+                         оборудования!</b></li>
+                    <li>Передача на частотах вне разрешённых диапазонов может привести к штрафам с конфискацией или даже
+                      уголовной ответственности.</li>
+                    <li>Аппаратная начинка радиостанции настроена только на диапазоны VHF и UHF. Включение передачи вне
+                      этих диапазонов не изменит аппаратную конфигурацию радиостанции.
+                      На частотах вне диапазонов VHF и UHF, рация работает с крайне малой мощностью и большим КСВ, что
+                      может привести к повреждению рации.
+                      Что ещё хуже, рация будет выдавать множество гармоник на соседних частотах, причём сигнал на них
+                      будет даже сильнее, чем на выбранной частоте.
+                      <b>Например при передаче в диапазоне CB мощность на выбранной частоте  будет в микроВаттах, а на
+                       частотах гармоник сигнал будет в несколько раз сильнее.</b>
                     </li>
                     </li>
-                    <li>You take full responsibility for your actions!</li>
+                    <li>ВЫ и только ВЫ несёте ответственность за свои дейстия!</li>
                   </ul>
-                  <p>If you agree to these warning and terms, you may now show the hidden mods by <a
-                      onclick="showHiddenMods()" class="card-link" style="cursor: pointer;"><b>clicking here.</b></a>
+                  <p>Если вы согласны с вышеуказанным, вы можете отобразить скрытые моды <a
+                      onclick="showHiddenMods()" class="card-link" style="cursor: pointer;"><b>нажав здесь.</b></a>
                   </p>
-                  <p>The mods will show up on the mod list with a red border and title.</p>
+                  <p>Моды отобразятся в общем списке с красной рамкой и заголовком.</p>
                 </div>
 
               </div>
@@ -226,10 +227,10 @@
               <div class="card shadow-lg mb-4">
                 <div class="card-header py-3 d-flex">
                   <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Mods</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Модификации</h6>
                   </div>
                   <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="https://github.com/whosmatt/uvmod">Contribute mods &rarr;</a>
+                    href="https://t.me/uv_k5/34434">Группа в ТГ &rarr;</a>
                 </div>
                 <div id="modsContainer" class="card-body">
                 </div>
@@ -241,10 +242,10 @@
               <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
                 <div class="card-header py-3 d-flex">
                   <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Console</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Консоль</h6>
                   </div>
                   <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="fw/uvk5updater.zip">Download updater software &rarr;</a>
+                    href="fw/uvk5updater.zip">Программа для прошивки &rarr;</a>
                 </div>
                 <div class="card-body">
                   <div>
@@ -261,16 +262,16 @@
                       </div>
                       <div id="customFileInputDiv" class="custom-file d-none">
                         <input id="customFileInput" type="file" class="custom-file-input">
-                        <label id="customFileLabel" class="custom-file-label" for="customFileInput">Select own firmware
-                          (v26 only)</label>
+                        <label id="customFileLabel" class="custom-file-label" for="customFileInput">Выбрать файл
+                          (только v26)</label>
                       </div>
-                      <span id="useDefaultFirmwareSpan" class="form-control" readonly>Using stock v26 firmware</span>
+                      <span id="useDefaultFirmwareSpan" class="form-control" readonly>Использовать оригинальную v26</span>
                     </div>
                     <select class="form-control mt-2" id="firmwareVersionSelect">
-                      <option value="*">Patch for all radios</option>
-                      <option value="2">Patch for UV-K5</option>
-                      <option value="3">Patch for UV-K6, UV-K5(8)</option>
-                      <option value="4">Patch for UV-5R Plus</option>
+                      <option value="*">Для всех раций</option>
+                      <option value="2">Для UV-K5, UV-K5(8)</option>
+                      <option value="3">Для UV-K6</option>
+                      <option value="4">Для UV-5R Plus</option>
                     </select>
                   </div>
 
@@ -279,7 +280,7 @@
                       <span class="icon text-white-50">
                         <i class="fas fa-wrench"></i>
                       </span>
-                      <span class="text w-100">Patch firmware</span>
+                      <span class="text w-100">Собрать</span>
                     </a>
                   </div>
                   <div class="mt-2 d-flex">
@@ -287,13 +288,13 @@
                       <span class="icon text-white-50">
                         <i class="fas fa-download"></i>
                       </span>
-                      <span class="text w-100">Save firmware</span>
+                      <span class="text w-100">Скачать</span>
                     </a>
                     <a id="flashButton" onclick="startFlasher()" class="btn btn-dark btn-icon-split disabled w-100">
                       <span class="icon text-white-50">
                         <i class="fab fa-usb"></i>
                       </span>
-                      <span class="text w-100">Flash directly</span>
+                      <span class="text w-100">Прошить</span>
                     </a>
                   </div>
                 </div>
@@ -422,6 +423,8 @@
     });
   </script>
 
+<footer class="card sticky-footer"><div class="copyright card-body">Сделано на основе <a href="https://github.com/whosmatt/uvmod" target="_blank">UVMOD by whosmatt</div></footer>
+</body>
 
 </body>
 
