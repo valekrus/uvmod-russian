@@ -164,7 +164,7 @@ modClasses = [
         apply(firmwareData) {
             const minValue = 0;
             const maxValue = 63;
-            const inputValue = parseInt(this.contrastValue.value);
+            const inputValue = parseInt(this.contrastValueInput.value);
 
             if (!isNaN(inputValue) && inputValue >= minValue && inputValue <= maxValue) {
                 const newData = new Uint8Array([inputValue]);
