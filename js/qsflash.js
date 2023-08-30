@@ -120,12 +120,19 @@ async function readPacket(port, expectedData, timeout = 1000) {
             function handleData({ value, done }) {
                 if (done) {
                     // If `done` is true, then the reader has been cancelled
+                    console.log('Reader has been cancelled. Current Buffer:', buffer, uint8ArrayToHexString(buffer));
                     reject('Reader has been cancelled.');
                     return;
                 }
 
                 // Append the new data to the buffer
                 buffer = new Uint8Array([...buffer, ...value]);
+
+                // Strip the beginning of the buffer until the first 0xAB byte
+                // This is done to ensure that the buffer does not contain any incomplete packets
+                while (buffer.length > 0 && buffer[0] !== 0xAB) {
+                    buffer = buffer.slice(1);
+                }
 
                 // Process packets while there's enough data in the buffer
                 while (buffer.length >= 4 && buffer[0] === 0xAB && buffer[1] === 0xCD) {
