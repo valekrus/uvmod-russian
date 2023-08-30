@@ -1440,8 +1440,10 @@ modClasses = [
             const inputValue = parseInt(this.toneValue.value);
 
             if (!isNaN(inputValue) && inputValue >= 1000 && inputValue <= 3950) {
-                const newData = new Uint8Array([inputValue]);
-                firmwareData = replaceSection(firmwareData, newData, offset);
+                const newData = new Uint8Array(4);
+                const dataView = new DataView(newData.buffer);
+                dataView.setUint32(0, inputValue, true);
+                firmwareData = replaceSection(firmwareData, newData, offset); // does not seem to work
                 log(`Успешно применён: ${this.name}.`);
             }
             else {
@@ -1604,45 +1606,6 @@ modClasses = [
         }
     }
     ,
-    class Mod_ChangeRXLimits extends FirmwareMod {
-        constructor() {
-            super("Расширить лимиты RX", "Разрешает приём от 18 МГц до 1300 МГц. Диапазоны передачи не изменяются.", 0);
-            [this.inputMinRX, this.inputMaxRX] = addTwoInputFields(this.modSpecificDiv, ["От:","до:","МГц"], "50", "600");
-
-        }
-
-        apply(firmwareData) {
-            const offsetLow = 0xe074;
-            const offsetHi = 0xe0a8;
-            const rxStart = parseInt(this.inputMinRX.value) * 100000;
-            const rxStop = parseInt(this.inputMaxRX.value) * 100000;
-
-            if ((rxStart <= rxStop) && (rxStart >= 100000) && (rxStart <= 130000000) && (rxStop >= 100000) && (rxStop <= 130000000)) {
-
-                const bufferLow = new ArrayBuffer(4);
-                const dataViewLow = new DataView(bufferLow);
-                const bufferHi = new ArrayBuffer(4);
-                const dataViewHi = new DataView(bufferHi);
-
-                dataViewLow.setUint32(0, rxStart, true);
-                dataViewHi.setUint32(0, rxStop, true);
-
-                const rxHexLow = new Uint8Array(bufferLow);
-                const rxHexHi = new Uint8Array(bufferHi);
-
-                firmwareData = replaceSection(firmwareData, rxHexLow, offsetLow);
-                firmwareData = replaceSection(firmwareData, rxHexHi, offsetHi);
-
-                log(`Успешно применён: ${this.name}.`);
-            }
-            else {
-                log(`Ошибка применения ${this.name}: Неверные данные! Частоты должны быть более 18 МГц и менее 1300 МГц, максимальная больше или равна минимальной.`);
-            }
-
-            return firmwareData;
-        }
-    }
-    ,
     class Mod_AMOnAllBands extends FirmwareMod {
         constructor() {
             super("Разрешить приём AM везде", "Разрешает указывать модуляцию AM на любых диапазонах, а не только на авиа.", 0);
@@ -1673,58 +1636,106 @@ modClasses = [
         }
     }
     ,
-    class Mod_CustomFreqRanges extends FirmwareMod {
+    class Mod_FrequencyRangeAdvanced extends FirmwareMod {
         constructor() {
-            super("Сетка диапазонов частот", "Позволяет заменить стандартную сетку диапазонов.", 0);
+            super("Диапазоны частот", "Позволяет изменить диапазоны приёма от 18 МГц до 1300 МГц. Диапазоны передачи не изменяются.", 0);
+            this.selectSimple = addRadioButton(this.modSpecificDiv, "Простой режим: Расширить 1-й диапазон вниз до указанной минимальной частоты, а 7-й диапазон вверх до указанной максимальной частоты. Допустимые значения от 18МГц до 1300МГц.", "selectSimpleMode", "selectFrequencyRange");
+            this.selectCustom = addRadioButton(this.modSpecificDiv, "Расширенный режим: Позволяет вручную изменить сетку диапазонов рации.", "selectCustomMode", "selectFrequencyRange");
+            this.selectSimple.checked = true;
 
-            this.range1Inputs = addTwoInputFields(this.modSpecificDiv, ["1-й диапазон.","-","Гц"], "50000000", "76000000");
-            this.range2Inputs = addTwoInputFields(this.modSpecificDiv, ["2-й диапазон.","-","Гц"], "108000000", "135999900");
-            this.range3Inputs = addTwoInputFields(this.modSpecificDiv, ["3-й диапазон.","-","Гц"], "136000000", "173999900");
-            this.range4Inputs = addTwoInputFields(this.modSpecificDiv, ["4-й диапазон.","-","Гц"], "174000000", "349999900");
-            this.range5Inputs = addTwoInputFields(this.modSpecificDiv, ["5-й диапазон.","-","Гц"], "350000000", "399999900");
-            this.range6Inputs = addTwoInputFields(this.modSpecificDiv, ["6-й диапазон.","-","Гц"], "400000000", "469999900");
-            this.range7Inputs = addTwoInputFields(this.modSpecificDiv, ["7-й диапазон.","-","Гц"], "470000000", "600000000");
+            const simpleModeDiv = document.createElement("div");
+            simpleModeDiv.classList.add("mt-2");
+            [this.inputMinRX, this.inputMaxRX] = addTwoInputFields(simpleModeDiv, ["От:","до:","МГц"], "50", "600");
+            this.modSpecificDiv.appendChild(simpleModeDiv);
+
+            const customModeDiv = document.createElement("div");
+            customModeDiv.classList.add("d-none", "mt-2");
+
+            const explanation = document.createElement("p");
+            explanation.innerText = "Здесь вы можете настроить сетку диапазонов. Пожалуйста, убедитесь что диапазоны указаны в корректном порядке и не пересекаются. Диапазон значений в пределах от 18МГц до 1300МГц, с разрывом от 630 до 840 МГц, где невозможны приём и передача из-за аппаратных ограничений.";
+            customModeDiv.appendChild(explanation);
+
+            this.range1Inputs = addTwoInputFields(customModeDiv, ["1-й диапазон.","-","Гц"], "50000000", "76000000");
+            this.range2Inputs = addTwoInputFields(customModeDiv, ["2-й диапазон.","-","Гц"], "108000000", "135999900");
+            this.range3Inputs = addTwoInputFields(customModeDiv, ["3-й диапазон.","-","Гц"], "136000000", "173999900");
+            this.range4Inputs = addTwoInputFields(customModeDiv, ["4-й диапазон.","-","Гц"], "174000000", "349999900");
+            this.range5Inputs = addTwoInputFields(customModeDiv, ["5-й диапазон.","-","Гц"], "350000000", "399999900");
+            this.range6Inputs = addTwoInputFields(customModeDiv, ["6-й диапазон.","-","Гц"], "400000000", "469999900");
+            this.range7Inputs = addTwoInputFields(customModeDiv, ["7-й диапазон.","-","Гц"], "470000000", "600000000");
+
+            this.modSpecificDiv.appendChild(customModeDiv);
+
+            this.selectCustom.parentElement.parentElement.addEventListener("change", () => {
+                customModeDiv.classList.toggle("d-none", !this.selectCustom.checked);
+                simpleModeDiv.classList.toggle("d-none", !this.selectSimple.checked);
+            });
         }
 
         apply(firmwareData) {
-            const offset1 = 0xE074;
-            const offset2 = 0xE090;
-            const loFreqs = [
-                Math.trunc(parseInt(this.range1Inputs[0].value) * 0.1),
-                Math.trunc(parseInt(this.range2Inputs[0].value) * 0.1),
-                Math.trunc(parseInt(this.range3Inputs[0].value) * 0.1),
-                Math.trunc(parseInt(this.range4Inputs[0].value) * 0.1),
-                Math.trunc(parseInt(this.range5Inputs[0].value) * 0.1),
-                Math.trunc(parseInt(this.range6Inputs[0].value) * 0.1),
-                Math.trunc(parseInt(this.range7Inputs[0].value) * 0.1)
-            ];
-            const hiFreqs = [
-                Math.trunc(parseInt(this.range1Inputs[1].value) * 0.1),
-                Math.trunc(parseInt(this.range2Inputs[1].value) * 0.1),
-                Math.trunc(parseInt(this.range3Inputs[1].value) * 0.1),
-                Math.trunc(parseInt(this.range4Inputs[1].value) * 0.1),
-                Math.trunc(parseInt(this.range5Inputs[1].value) * 0.1),
-                Math.trunc(parseInt(this.range6Inputs[1].value) * 0.1),
-                Math.trunc(parseInt(this.range7Inputs[1].value) * 0.1)
-            ];
+            const offset = 0xe074;
 
-            const loBuffer = new ArrayBuffer(28);
-            const loDataView = new DataView(loBuffer);
-            const hiBuffer = new ArrayBuffer(28);
-            const hiDataView = new DataView(hiBuffer);
-
-            for (let i = 0; i < loFreqs.length; i++) {
-                loDataView.setUint32(i * 4, loFreqs[i], true);
-                hiDataView.setUint32(i * 4, hiFreqs[i], true);
+            if (this.selectSimple.checked) {
+                const rxStart = parseInt(this.inputMinRX.value) * 100000;
+                const rxStop = parseInt(this.inputMaxRX.value) * 100000;
+                if ((rxStart <= rxStop) && (rxStart >= 100000) && (rxStart <= 130000000) && (rxStop >= 100000) && (rxStop <= 130000000)) {
+			    
+                    const bufferLow = new ArrayBuffer(4);
+                    const dataViewLow = new DataView(bufferLow);
+                    const bufferHi = new ArrayBuffer(4);
+                    const dataViewHi = new DataView(bufferHi);
+			    
+                    dataViewLow.setUint32(0, rxStart, true);
+                    dataViewHi.setUint32(0, rxStop, true);
+			    
+                    const rxHexLow = new Uint8Array(bufferLow);
+                    const rxHexHi = new Uint8Array(bufferHi);
+			    
+                    firmwareData = replaceSection(firmwareData, rxHexLow, offset);
+                    firmwareData = replaceSection(firmwareData, rxHexHi, offset + (4 * 7) + (4 * 6));
+			    
+                    log(`Успешно применён: ${this.name}.`);
+                }
+                else {
+                    log(`Ошибка применения ${this.name}: Неверные данные! Частоты должны быть более 18 МГц и менее 1300 МГц, максимальная больше или равна минимальной.`);
+                }
             }
+            else if (this.selectCustom.checked) {
 
-            const loFreqsHex = new Uint8Array(loBuffer);
-            const hiFreqsHex = new Uint8Array(hiBuffer);
+                const lowerFreqs = [
+                    Math.trunc(parseInt(this.range1Inputs[0].value) * 0.1),
+                    Math.trunc(parseInt(this.range2Inputs[0].value) * 0.1),
+                    Math.trunc(parseInt(this.range3Inputs[0].value) * 0.1),
+                    Math.trunc(parseInt(this.range4Inputs[0].value) * 0.1),
+                    Math.trunc(parseInt(this.range5Inputs[0].value) * 0.1),
+                    Math.trunc(parseInt(this.range6Inputs[0].value) * 0.1),
+                    Math.trunc(parseInt(this.range7Inputs[0].value) * 0.1)
+                ];
+                const higherFreqs = [
+                    Math.trunc(parseInt(this.range1Inputs[1].value) * 0.1),
+                    Math.trunc(parseInt(this.range2Inputs[1].value) * 0.1),
+                    Math.trunc(parseInt(this.range3Inputs[1].value) * 0.1),
+                    Math.trunc(parseInt(this.range4Inputs[1].value) * 0.1),
+                    Math.trunc(parseInt(this.range5Inputs[1].value) * 0.1),
+                    Math.trunc(parseInt(this.range6Inputs[1].value) * 0.1),
+                    Math.trunc(parseInt(this.range7Inputs[1].value) * 0.1)
+                ];
 
-            firmwareData = replaceSection(firmwareData, loFreqsHex, offset1);
-            firmwareData = replaceSection(firmwareData, hiFreqsHex, offset2);
+                const buffer = new ArrayBuffer(4 * 7 * 2);
+                const dataView = new DataView(buffer);
 
-            log(`Успешно применён: ${this.name}.`);
+                for (let i = 0; i < lowerFreqs.length; i++) {
+                    dataView.setUint32(i * 4, lowerFreqs[i], true);
+                    dataView.setUint32(i * 4 + 28, higherFreqs[i], true);
+                }
+
+                const freqsHex = new Uint8Array(buffer);
+                console.log(freqsHex);
+                console.log(uint8ArrayToHexString(freqsHex));
+
+                firmwareData = replaceSection(firmwareData, freqsHex, offset);
+
+                log(`Успешно применён: ${this.name}.`);
+            }
 
             return firmwareData;
         }
