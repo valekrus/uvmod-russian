@@ -1474,11 +1474,43 @@ modClasses = [
         }
     }
     ,
+    class Mod_AMOnAllBands extends FirmwareMod {
+        constructor() {
+            super("Разрешить приём AM везде", "Разрешает указывать модуляцию AM на любых диапазонах, а не только на авиа.", 0);
+        }
+
+        apply(firmwareData) {
+            const offset1 = 0x6232;
+            const offset2 = 0x6246;
+            const offset3 = 0x624c;
+            const oldData1 = hexString("0b");
+            const oldData2 = hexString("01");
+            const oldData3 = hexString("b07b");
+            const newData1 = hexString("0e");
+            const newData2 = hexString("04");
+            const newData3 = hexString("01e0");
+
+            if (compareSection(firmwareData, oldData1, offset1) && compareSection(firmwareData, oldData2, offset2) && compareSection(firmwareData, oldData3, offset3)) {
+                firmwareData = replaceSection(firmwareData, newData1, offset1);
+                firmwareData = replaceSection(firmwareData, newData2, offset2);
+                firmwareData = replaceSection(firmwareData, newData3, offset3);
+                log(`Успешно применён: ${this.name}.`);
+            }
+            else {
+                log(`Ошибка применения ${this.name}: Неожиданные данные! Патч либо уже был применён, либо несовместимая версия прошивки.`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
     class Mod_ChangeTXLimits extends FirmwareMod {
         constructor() {
-            super("Расширить лимиты TX", "Меняет верхний и нижний программный предел для передачи. Если необходимо разрешить передачу на первом и последнем диапазоне - воспользуйтесь дополнительно модом \"Разрешить передачу везде\" или разблокируйте их в скрытом меню.", 0);
+            super("Диапазон TX", "Меняет верхний и нижний программный предел для передачи. Если необходимо разрешить передачу во всём этом диапазоне - воспользуйтесь дополнительно модом \"Разрешить передачу\" или разблокируйте нужные диапазоны в скрытом меню.", 0);
             this.hidden = true;
+
             [this.inputMinTX, this.inputMaxTX] = addTwoInputFields(this.modSpecificDiv, ["От:","до:","МГц"], "50", "600");
+
         }
 
         apply(firmwareData) {
@@ -1507,57 +1539,63 @@ modClasses = [
         }
     }
     ,
-    class Mod_EnableTXEverywhere extends FirmwareMod {
+    class Mod_EnableTXRange extends FirmwareMod {
         constructor() {
-            super("Разрешить передачу везде", "ВНИМАНИЕ! Разрешает передавать на любых частотах. Использовать только для тестов, не включайте передачу вне разрешённых диапазонов!", 0);
+            super("Разрешить передачу", "ВНИМАНИЕ! Разрешает передавать на любых частотах из диапазона TX. Игнорирует настройки скрытого меню. Использовать только для тестов, не включайте передачу вне разрешённых диапазонов!", 0);
             this.hidden = true;
+            this.selectTXSimple = addRadioButton(this.modSpecificDiv, "Простой режим: Разрешить передачу на любой частоте из диапазона TX (указывается в моде \"Диапазон TX\").", "selectTXSimpleMode", "selectTXRangeMode");
+            this.selectTXCustom = addRadioButton(this.modSpecificDiv, "Расширенный режим: Заменяет проверку на запрет TX простой функцией, которая блокирует или разрешает передачу в определённом диапазоне частот.", "selectTXCustomMode", "selectTXRangeMode");
+            this.selectTXSimple.checked = true;
+
+            const customTXModeCardDiv = document.createElement("div");
+            customTXModeCardDiv.classList.add("d-none", "card", "md-3");
+
+            const customTXModeDiv = document.createElement("div");
+            customTXModeDiv.classList.add("card-body");
+
+            const explanationTX = document.createElement("p");
+            explanationTX.innerText = "Этот режим может быть использован, например, чтобы запретить передачу в авиадиапазоне, или чтобы сделать рацию передающей только в диапазоне PMR/LPD. По умолчанию значения соответствуют запрету передаче в авиадиапазоне и разрешению в остальных диапазонах.";
+            customTXModeDiv.appendChild(explanationTX);
+
+            this.selectTXBlock = addRadioButton(customTXModeDiv, "Диапазон будет заблокирован, остальные разрешены. ", "selectTXBlock", "selectTXRange");
+            this.selectTXAllow = addRadioButton(customTXModeDiv, "Диапазон будет разрешён, остальные заблокированы. ", "selectTXAllow", "selectTXRange");
+            this.selectTXBlock.checked = true;
+            [this.lowFreq, this.highFreq] = addTwoInputFields(customTXModeDiv, ["От:","до:","Гц"], "118000000", "137000000");
+
+            customTXModeCardDiv.appendChild(customTXModeDiv);
+            this.modSpecificDiv.appendChild(customTXModeCardDiv);
+
+            this.selectTXCustom.parentElement.parentElement.addEventListener("change", () => {
+                customTXModeCardDiv.classList.toggle("d-none", !this.selectTXCustom.checked);
+            });
         }
 
         apply(firmwareData) {
-            const offset = 0x180e;
-            const oldData = hexString("cf2a");
-            const newData = hexString("5de0");
-            if (compareSection(firmwareData, oldData, offset)) {
+            if (this.selectTXSimple.checked) {
+                const offset = 0x180e;
+                const newData = hexString("5de0");
+
                 firmwareData = replaceSection(firmwareData, newData, offset);
                 log(`Успешно применён: ${this.name}.`);
             }
-            else {
-                log(`Ошибка применения ${this.name}: Неожиданные данные! Патч либо уже был применён, либо несовместимая версия прошивки.`);
-            }
-
-            return firmwareData;
-        }
-    }
-    ,
-    class Mod_CustomTXRange extends FirmwareMod {
-        constructor() {
-            super("Разрешить/запретить передачу в диапазоне", "Внимание! Этот мод заменяет проверку на запрет TX простой функцией, которая блокирует или разрешает передачу в определённом диапазоне частот. Может быть использовано, например, чтобы запретить передачу в авиадиапазоне, или, например, чтобы сделать рацию передающей только в диапазоне PMR/LPD. По умолчанию значения соответствуют запрету передаче в авиадиапазоне и разрешению в остальных диапазонах.", 0);
-            this.hidden = true;
-
-            this.selectBlock = addRadioButton(this.modSpecificDiv, "Диапазон будет заблокирован, остальные разрешены. ", "selectBlock", "selectTXRange");
-            this.selectAllow = addRadioButton(this.modSpecificDiv, "Диапазон будет разрешён, остальные заблокированы. ", "selectAllow", "selectTXRange");
-            this.selectBlock.checked = true;
-            this.selectAllow.parentElement.classList.add("mb-3");
-
-            [this.lowFreq, this.highFreq] = addTwoInputFields(this.modSpecificDiv, ["От:","до:","Гц"], "118000000", "137000000");
-        }
-
-        apply(firmwareData) {
-            const offset = 0x1804;
-            let shellcode;
-            if (this.selectBlock.checked) {
-                shellcode = hexString("f0b5014649690968054a914205d3054a914202d20020c04301e00020ffe7f0bd1111111122222222");
-            } else if (this.selectAllow.checked) {
-                shellcode = hexString("F0B5014649690968054A914204D3054A914201D2002002E00020C043FFE7F0BD1111111122222222");
-            }
-            const dataView = new DataView(shellcode.buffer);
-            const lowFreq = Math.floor(this.lowFreq.value / 10);
-            const highFreq = Math.floor(this.highFreq.value / 10);
-            dataView.setUint32(32, lowFreq, true);
-            dataView.setUint32(36, highFreq, true);
-
-            firmwareData = replaceSection(firmwareData, shellcode, offset);
-            log(`Success: ${this.name} applied.`);
+            else if (this.selectTXCustom.checked) {
+			    const offset = 0x1804;
+                let shellcode;
+                if (this.selectTXBlock.checked) {
+                    shellcode = hexString("f0b5014649690968054a914205d3054a914202d20020c04301e00020ffe7f0bd1111111122222222");
+                }
+                else if (this.selectTXAllow.checked) {
+                    shellcode = hexString("F0B5014649690968054A914204D3054A914201D2002002E00020C043FFE7F0BD1111111122222222");
+                }
+                const dataView = new DataView(shellcode.buffer);
+                const lowFreq = Math.floor(this.lowFreq.value / 10);
+                const highFreq = Math.floor(this.highFreq.value / 10);
+                dataView.setUint32(32, lowFreq, true);
+                dataView.setUint32(36, highFreq, true);
+			    
+                firmwareData = replaceSection(firmwareData, shellcode, offset);
+                log(`Успешно применён: ${this.name}.`);
+			}
 
             return firmwareData;
         }
@@ -1606,50 +1644,22 @@ modClasses = [
         }
     }
     ,
-    class Mod_AMOnAllBands extends FirmwareMod {
-        constructor() {
-            super("Разрешить приём AM везде", "Разрешает указывать модуляцию AM на любых диапазонах, а не только на авиа.", 0);
-        }
-
-        apply(firmwareData) {
-            const offset1 = 0x6232;
-            const offset2 = 0x6246;
-            const offset3 = 0x624c;
-            const oldData1 = hexString("0b");
-            const oldData2 = hexString("01");
-            const oldData3 = hexString("b07b");
-            const newData1 = hexString("0e");
-            const newData2 = hexString("04");
-            const newData3 = hexString("01e0");
-
-            if (compareSection(firmwareData, oldData1, offset1) && compareSection(firmwareData, oldData2, offset2) && compareSection(firmwareData, oldData3, offset3)) {
-                firmwareData = replaceSection(firmwareData, newData1, offset1);
-                firmwareData = replaceSection(firmwareData, newData2, offset2);
-                firmwareData = replaceSection(firmwareData, newData3, offset3);
-                log(`Успешно применён: ${this.name}.`);
-            }
-            else {
-                log(`Ошибка применения ${this.name}: Неожиданные данные! Патч либо уже был применён, либо несовместимая версия прошивки.`);
-            }
-
-            return firmwareData;
-        }
-    }
-    ,
     class Mod_FrequencyRangeAdvanced extends FirmwareMod {
         constructor() {
-            super("Диапазоны частот", "Позволяет изменить диапазоны приёма от 18 МГц до 1300 МГц. Диапазоны передачи не изменяются.", 0);
-            this.selectSimple = addRadioButton(this.modSpecificDiv, "Простой режим: Расширить 1-й диапазон вниз до указанной минимальной частоты, а 7-й диапазон вверх до указанной максимальной частоты. Допустимые значения от 18МГц до 1300МГц.", "selectSimpleMode", "selectFrequencyRange");
+            super("Диапазоны частот", "Позволяет изменить диапазоны приёма в пределах от 18 МГц до 1300 МГц. Диапазоны передачи не изменяются.", 0);
+            this.selectSimple = addRadioButton(this.modSpecificDiv, "Простой режим: Расширить 1-й диапазон вниз до указанной минимальной частоты, а 7-й диапазон вверх до указанной максимальной частоты.", "selectSimpleMode", "selectFrequencyRange");
             this.selectCustom = addRadioButton(this.modSpecificDiv, "Расширенный режим: Позволяет вручную изменить сетку диапазонов рации.", "selectCustomMode", "selectFrequencyRange");
             this.selectSimple.checked = true;
 
+            const modeCardDiv = document.createElement("div");
+            modeCardDiv.classList.add("card", "mt-2");
             const simpleModeDiv = document.createElement("div");
-            simpleModeDiv.classList.add("mt-2");
+            simpleModeDiv.classList.add("card-body");
             [this.inputMinRX, this.inputMaxRX] = addTwoInputFields(simpleModeDiv, ["От:","до:","МГц"], "50", "600");
-            this.modSpecificDiv.appendChild(simpleModeDiv);
+            modeCardDiv.appendChild(simpleModeDiv);
 
             const customModeDiv = document.createElement("div");
-            customModeDiv.classList.add("d-none", "mt-2");
+            customModeDiv.classList.add("d-none", "card-body");
 
             const explanation = document.createElement("p");
             explanation.innerText = "Здесь вы можете настроить сетку диапазонов. Пожалуйста, убедитесь что диапазоны указаны в корректном порядке и не пересекаются. Диапазон значений в пределах от 18МГц до 1300МГц, с разрывом от 630 до 840 МГц, где невозможны приём и передача из-за аппаратных ограничений.";
@@ -1663,7 +1673,9 @@ modClasses = [
             this.range6Inputs = addTwoInputFields(customModeDiv, ["6-й диапазон.","-","Гц"], "400000000", "469999900");
             this.range7Inputs = addTwoInputFields(customModeDiv, ["7-й диапазон.","-","Гц"], "470000000", "600000000");
 
-            this.modSpecificDiv.appendChild(customModeDiv);
+            modeCardDiv.appendChild(customModeDiv);
+
+            this.modSpecificDiv.appendChild(modeCardDiv);
 
             this.selectCustom.parentElement.parentElement.addEventListener("change", () => {
                 customModeDiv.classList.toggle("d-none", !this.selectCustom.checked);
