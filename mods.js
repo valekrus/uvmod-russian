@@ -102,7 +102,7 @@ modClasses = [
             super("Приложения (дополнительно)", "ВАЖНО! Только одно приложение может быть установлено - либо из этого мода с приложениями, либо из первого. Добавляет приложение из списка на выбор:", "зависит от модификации");
             this.hidden = true;
 
-            this.selectAMTX = addRadioButton(this.modSpecificDiv, "AM TX. By @RE3CON, v16.", "selectAMTX", "selectApp");
+            this.selectAMTX = addRadioButton(this.modSpecificDiv, "AM TX. Передаёт только тон ~1.9 кГц. Для тестирования. By @RE3CON, v16.", "selectAMTX", "selectApp");
         }
 
         apply(firmwareData) {
