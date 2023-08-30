@@ -1763,6 +1763,11 @@ modClasses = [
             this.inputStep5 = addInputField(this.modSpecificDiv, ["Шаг 5", "Гц"], "12500");
             this.inputStep6 = addInputField(this.modSpecificDiv, ["Шаг 6", "Гц"], "25000");
             this.inputStep7 = addInputField(this.modSpecificDiv, ["Шаг 7 (доступен только на втором диапазоне)", "Гц"], "8330");
+
+            const inputStep7Help = document.createElement("small");
+            inputStep7Help.classList.add("form-text", "text-muted");
+            inputStep7Help.innerText = "* - доступен только на втором диапазоне";
+            this.modSpecificDiv.appendChild(inputStep7Help);
         }
 
         apply(firmwareData) {
