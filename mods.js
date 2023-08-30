@@ -1554,7 +1554,7 @@ modClasses = [
             customTXModeDiv.classList.add("card-body");
 
             const explanationTX = document.createElement("p");
-            explanationTX.innerText = "Этот режим может быть использован, например, чтобы запретить передачу в авиадиапазоне, или чтобы сделать рацию передающей только в диапазоне PMR/LPD. По умолчанию значения соответствуют запрету передаче в авиадиапазоне и разрешению в остальных диапазонах.";
+            explanationTX.innerText = "Этот режим может быть использован, например, чтобы запретить передачу в авиадиапазоне, или чтобы сделать рацию передающей только в диапазоне PMR/LPD. По умолчанию значения соответствуют запрету передачи в авиадиапазоне и разрешению в остальных диапазонах.";
             customTXModeDiv.appendChild(explanationTX);
 
             this.selectTXBlock = addRadioButton(customTXModeDiv, "Диапазон будет заблокирован, остальные разрешены. ", "selectTXBlock", "selectTXRange");
