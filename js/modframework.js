@@ -257,6 +257,56 @@ function compareSection(array, section, offset) {
 }
 
 /**
+ * Converts 8pix height bitmap with font divided by halves to 16-bit font bitmap.
+ * @param {Uint8Array} fontData - The Uint8Array of initial font data.
+ * @param {number} symbWidth - The width of the symbol within the font.
+ * @returns {Uint16Array} - Coverted font data.
+ */
+function font8to16(fontData, symbWidth) {
+    let fontConv = new Uint16Array(fontData.length / 2);
+	let fontConvView = new DataView(fontConv.buffer);
+	let j = 0;
+    for (let s = 0; s < parseInt(fontData.length/(symbWidth * 2)); s++) {
+        const symbOffset = s * symbWidth * 2;
+        for (let i = 0; i < symbWidth; i++) {
+            fontConvView.setUint8(j++, fontData[symbOffset+i]);
+			fontConvView.setUint8(j++, fontData[symbOffset+i+symbWidth]);
+        }
+    }
+    return fontConv;
+}
+
+/**
+ * Draws font data as image on the canvas.
+ * @param {HTMLElement} previewCanvas - Canvas for the image.
+ * @param {Uint8Array, Uint16Array} fontData - the data of the font.
+ * @returns {ImageData} - Image data.
+ */
+function drawFont(previewCanvas, fontData) {
+    const ctx = previewCanvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, previewCanvas.width, previewCanvas.height);
+	
+    for (let x = 0; x < previewCanvas.width; x++) {
+        
+        for (let y = 0; y < previewCanvas.height; y++) {
+            const index = y * previewCanvas.width + x;
+            const i = index * 4;
+            let pixel = 0;
+	
+            pixel = !((fontData[x] & (1 << y)) != 0);
+	
+            imageData.data[i] = pixel * 255;
+            imageData.data[i + 1] = pixel * 255;
+            imageData.data[i + 2] = pixel * 255;
+            imageData.data[i + 3] = 255;
+        }
+    }
+	
+    ctx.putImageData(imageData, 0, 0);
+    return imageData;
+}
+
+/**
  * Adds an input field to a parent div with a label and default text.
  *
  * @param {HTMLElement} parentDiv - The parent div to which the input field will be added. Usually this.modSpecificDiv
