@@ -144,11 +144,9 @@ modClasses = [
         constructor() {
             super("Контраст LCD", "Изменяет контраст LCD на любое значение от 0 до 63 (больше - темнее). Значение по умолчанию 31", 0);
 
-            //this.contrastValue = addInputField(this.modSpecificDiv, ["Новое значение контраста, в диапазоне 0-63:"], "31");
             const contrastValueDiv = document.createElement("div");
             contrastValueDiv.classList.add("form-group");
             this.contrastValueInput = document.createElement("input");
-            //this.contrastValueInput.id = "contrastValue";
             this.contrastValueInput.className = "form-control-range";
             this.contrastValueInput.type = "range";
             this.contrastValueInput.min = "0";
@@ -228,15 +226,133 @@ modClasses = [
             this.selectTerminus.value = "0000FCFEFE0686C6E6FEFEFC0000003F7F7F676361607F7F3F0000000000181CFEFEFE000000000000000060607F7F7F6060000000001C1E1E06060686FEFE7C0000006070787C6E67636160600000000C0E0E86868686FEFE7C000000307070616161617F7F3E00000080C0E070381C0EFEFEFE0000000F0F0F0C0C0C0C7F7F7F000000FEFEFEC6C6C6C6C6C686000000307070606060607F7F3F000000F8FCFEC6C6C6C6C6C6800000003F7F7F606060607F7F3F0000000E0E0E060686E6FE7E1E000000000000007C7F7F0300000000007CFEFE86868686FEFE7C0000003F7F7F616161617F7F3F000000FCFEFE06060606FEFEFC000000016363636363637F3F1F000000008080808080808080000000000001010101010101010000";
             this.selectCustom = addRadioButton(this.modSpecificDiv, "Свой шрифт", "selectCustomBigDigits", "selectFontBigDigits");
             this.selectCustom.value = "00C0F0F83C0C0C0C0C1CF8F0E000071F3F7860606060703F1F0F000000003030FCFCFC000000000000000000007F7F7F00000000001038381C0C0C0C0CFCF8F0000070787C7C6E66676763616000001018189C8C8C8C8CCCF8F870003030307161616161713F3F1E0000000080C0E07038FCFCFC00001C1E1F1F191818187F7F7F180000FCFCCCCCCCCCCCCCCC8C0C000018307060606060717B3F1F00C0F0F8389C8C8C8C8C9C3830000F1F3F736161616173333F1E000C0C0C0C0C0C0C8CECFC3C1C0000004060787C1F0703000000000078F8DC8C8C8C8CDCF87800001E3F3F7361616161733F3F1E00F0F8B81C0C0C0C0C1CB8F0E0001133776766666676333F1F070000808080808080808080000000000303030303030303030000";
-            this.fontData = addInputField(this.modSpecificDiv, [], "");
-			this.fontData.parentElement.classList.add("d-none");
+
+            const customFontCardDiv = document.createElement("div");
+            customFontCardDiv.classList.add("d-none", "card", "md-3");
+
+            const customFontDiv = document.createElement("div");
+            customFontDiv.classList.add("card-body");
+
+            const explanationCustomFontFile = document.createElement("p");
+            explanationCustomFontFile.innerText = "Выберите файл изображения со шрифтом, размер картинки в идеале 143 на 16 пикселей. Если у вас нет картинки - можете воспользоваться полем для ввода шестнадцатиричного кода шрифта вручную.";
+            customFontDiv.appendChild(explanationCustomFontFile);
+
+            const fileInputDiv = document.createElement("div");
+            fileInputDiv.classList.add("custom-file", "mt-2");
+            this.customFileInput = document.createElement("input");
+            this.customFileInput.className = "custom-file-input";
+            this.customFileInput.type = "file";
+            this.customFileInput.accept = "image/bmp,image/jpeg,image/png";
+            this.customFileLabel = document.createElement("label");
+            this.customFileLabel.className = "custom-file-label";
+            this.customFileLabel.dataset.browse = "Обзор";
+            this.customFileLabel.innerText = "Выберите картинку";
+            this.customFileLabel.for = "customFileInput";
+            fileInputDiv.appendChild(this.customFileInput);
+            fileInputDiv.appendChild(this.customFileLabel);
+            this.canvas = document.createElement("canvas");
+            this.canvas.classList.add("mt-3", "mr-3", "border", "shadow-sm");
+            this.canvas.width = 143;
+            this.canvas.height = 16;
+            this.canvas2 = this.canvas.cloneNode();
+            fileInputDiv.appendChild(this.canvas);
+            fileInputDiv.appendChild(this.canvas2);
+            customFontDiv.appendChild(fileInputDiv);
+
+            const explanationCustomFontText = document.createElement("p");
+            explanationCustomFontText.innerText = "Итоговый код шрифта в виде шестнадцатиричной строки. По умолчанию здесь код стандартного шрифта. При ручной вставке символы \"\\x\", при наличии, будут удалены автоматически.";
+            customFontDiv.appendChild(explanationCustomFontText);
+
+            this.customFontData = document.createElement("textarea");
+            this.customFontData.classList.add("w-100", "form-control");
+            this.customFontData.rows = 8;
+            // this.customFontData.maxLength = 572;
+            this.customFontData.placeholder = "Тут должен быть шестнадцатиричный код шрифта, перезагрузите страницу, чтобы сбросить!";
+            this.customFontData.value = this.selectCustom.value;
+            customFontDiv.appendChild(this.customFontData);
+
+            customFontCardDiv.appendChild(customFontDiv);
+            this.modSpecificDiv.appendChild(customFontCardDiv);
+
+            this.customFileInput.addEventListener("change", (event) => {
+                const file = this.customFileInput.files[0];
+                this.customFileLabel.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = this.canvas;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                        function getPixel(x, y) {
+                            const index = y * canvas.width + x;
+                            const i = index * 4;
+                            return imageData[i] + imageData[i + 1] + imageData[i + 2] > 128 * 3 ? 0 : 1;
+                        }
+
+                        // run canvas content through getPixel and output to canvas2
+                        const canvas2 = this.canvas2;
+                        const ctx2 = canvas2.getContext('2d');
+                        const imageData2 = ctx2.getImageData(0, 0, canvas2.width, canvas2.height);
+                        for (let y = 0; y < canvas2.height; y++) {
+                            for (let x = 0; x < canvas2.width; x++) {
+                                const index = y * canvas2.width + x;
+                                const i = index * 4;
+                                const pixel = !getPixel(x, y);
+                                imageData2.data[i] = pixel * 255;
+                                imageData2.data[i + 1] = pixel * 255;
+                                imageData2.data[i + 2] = pixel * 255;
+                                imageData2.data[i + 3] = 255;
+                            }
+                        }
+                        ctx2.putImageData(imageData2, 0, 0);
+
+                        const outputArray = new Uint8Array((canvas2.width * canvas2.height)/8);
+
+                        let j = 0;
+                        for (let xs = 0; xs < canvas2.width; xs += 13) {
+                            let y = 0;
+                            for (let x = xs; x < (xs + 13); x++) {
+                                let byte = 0;
+                                for (let i = 0; i < 8; i++) {
+                                    byte |= getPixel(x, y + i) << i;
+                                }
+                                outputArray[j++] = byte;
+                            }
+                            y = 8;
+                            for (let x = xs; x < (xs + 13); x++) {
+                                let byte = 0;
+                                for (let i = 0; i < 8; i++) {
+                                    byte |= getPixel(x, y + i) << i;
+                                }
+                                outputArray[j++] = byte;
+                            }
+                        }
+
+                        this.customFontData.value = uint8ArrayToHexString(outputArray).toUpperCase();
+                        this.selectCustom.value = this.customFontData.value;
+			            drawFont(this.previewCanvas, font8to16(hexString(this.selectCustom.value), 13));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            this.customFontData.addEventListener("input", (event) => {
+                const reg = /\\x/g;
+                this.selectCustom.value = event.target.value.replace(reg, "");
+                event.target.value = this.selectCustom.value;
+			    drawFont(this.previewCanvas, font8to16(hexString(this.selectCustom.value), 13));
+            });
             this.selectCustom.parentElement.parentElement.addEventListener("change", (event) => {
-                this.fontData.parentElement.classList.toggle("d-none", !this.selectCustom.checked);
-			    drawFont(this.previewCanvas, font8to16(hexString(event.target.value), 13));
+                customFontCardDiv.classList.toggle("d-none", !this.selectCustom.checked);
+			    if (event.target.name == "selectFontBigDigits") {
+			        drawFont(this.previewCanvas, font8to16(hexString(event.target.value), 13));
+				}
             });
             this.selectTerminus.checked = true;
             drawFont(this.previewCanvas, font8to16(hexString(this.selectTerminus.value), 13));
-            this.selectCustom.disabled = true;
 
         }
 
@@ -255,6 +371,10 @@ modClasses = [
             else if (this.selectTerminus.checked) {
 //                const bigDigits = hexString("0000FCFEFE0686C6E6FEFEFC0000003F7F7F676361607F7F3F0000000000181CFEFEFE000000000000000060607F7F7F6060000000001C1E1E06060686FEFE7C0000006070787C6E67636160600000000C0E0E86868686FEFE7C000000307070616161617F7F3E00000080C0E070381C0EFEFEFE0000000F0F0F0C0C0C0C7F7F7F000000FEFEFEC6C6C6C6C6C686000000307070606060607F7F3F000000F8FCFEC6C6C6C6C6C6800000003F7F7F606060607F7F3F0000000E0E0E060686E6FE7E1E000000000000007C7F7F0300000000007CFEFE86868686FEFE7C0000003F7F7F616161617F7F3F000000FCFEFE06060606FEFEFC000000016363636363637F3F1F000000008080808080808080000000000001010101010101010000");
                 firmwareData = replaceSection(firmwareData, hexString(this.selectTerminus.value), offset);
+            }
+            else if (this.selectCustom.checked) {
+//                const bigDigits = hexString("00C0F0F83C0C0C0C0C1CF8F0E000071F3F7860606060703F1F0F000000003030FCFCFC000000000000000000007F7F7F00000000001038381C0C0C0C0CFCF8F0000070787C7C6E66676763616000001018189C8C8C8C8CCCF8F870003030307161616161713F3F1E0000000080C0E07038FCFCFC00001C1E1F1F191818187F7F7F180000FCFCCCCCCCCCCCCCCC8C0C000018307060606060717B3F1F00C0F0F8389C8C8C8C8C9C3830000F1F3F736161616173333F1E000C0C0C0C0C0C0C8CECFC3C1C0000004060787C1F0703000000000078F8DC8C8C8C8CDCF87800001E3F3F7361616161733F3F1E00F0F8B81C0C0C0C0C1CB8F0E0001133776766666676333F1F070000808080808080808080000000000303030303030303030000");
+                firmwareData = replaceSection(firmwareData, hexString(this.selectCustom.value), offset);
             }
 
             log(`Успешно применён: ${this.name}.`);
@@ -281,16 +401,122 @@ modClasses = [
             this.selectTerminus.value = "003E5149453E000000427F400000004661514946000022414949360000181412117F0000274545453900003E45454538000001016119070000364949493600000E5151513E000808080808000000000000000000";
             this.selectCustom = addRadioButton(this.modSpecificDiv, "Свой шрифт", "selectCustomSmallDigits", "selectFontSmallDigits");
             this.selectCustom.value = "003E414141413E0000427F4000000062515149494600224149494D3200181412117F1000274545454539003E494949493000017109050300003649494949360046494949291E0008080808080000000000000000";
-            this.fontData = addInputField(this.modSpecificDiv, [], "");
-			this.fontData.parentElement.classList.add("d-none");
+
+            const customFontCardDiv = document.createElement("div");
+            customFontCardDiv.classList.add("d-none", "card", "md-3");
+
+            const customFontDiv = document.createElement("div");
+            customFontDiv.classList.add("card-body");
+
+            const explanationCustomFontFile = document.createElement("p");
+            explanationCustomFontFile.innerText = "Выберите файл изображения со шрифтом, размер картинки в идеале 84 на 8 пикселей. Если у вас нет картинки - можете воспользоваться полем для ввода шестнадцатиричного кода шрифта вручную.";
+            customFontDiv.appendChild(explanationCustomFontFile);
+
+            const fileInputDiv = document.createElement("div");
+            fileInputDiv.classList.add("custom-file", "mt-2");
+            this.customFileInput = document.createElement("input");
+            this.customFileInput.className = "custom-file-input";
+            this.customFileInput.type = "file";
+            this.customFileInput.accept = "image/bmp,image/jpeg,image/png";
+            this.customFileLabel = document.createElement("label");
+            this.customFileLabel.className = "custom-file-label";
+            this.customFileLabel.dataset.browse = "Обзор";
+            this.customFileLabel.innerText = "Выберите картинку";
+            this.customFileLabel.for = "customFileInput";
+            fileInputDiv.appendChild(this.customFileInput);
+            fileInputDiv.appendChild(this.customFileLabel);
+            this.canvas = document.createElement("canvas");
+            this.canvas.classList.add("mt-3", "mr-3", "border", "shadow-sm");
+            this.canvas.width = 84;
+            this.canvas.height = 8;
+            this.canvas2 = this.canvas.cloneNode();
+            fileInputDiv.appendChild(this.canvas);
+            fileInputDiv.appendChild(this.canvas2);
+            customFontDiv.appendChild(fileInputDiv);
+
+            const explanationCustomFontText = document.createElement("p");
+            explanationCustomFontText.innerText = "Итоговый код шрифта в виде шестнадцатиричной строки. По умолчанию здесь код стандартного шрифта. При ручной вставке символы \"\\x\", при наличии, будут удалены автоматически.";
+            customFontDiv.appendChild(explanationCustomFontText);
+
+            this.customFontData = document.createElement("textarea");
+            this.customFontData.classList.add("w-100", "form-control");
+            this.customFontData.rows = 3;
+            // this.customFontData.maxLength = 168;
+            this.customFontData.placeholder = "Тут должен быть шестнадцатиричный код шрифта, перезагрузите страницу, чтобы сбросить!";
+            this.customFontData.value = this.selectCustom.value;
+            customFontDiv.appendChild(this.customFontData);
+
+            customFontCardDiv.appendChild(customFontDiv);
+            this.modSpecificDiv.appendChild(customFontCardDiv);
+
+            this.customFileInput.addEventListener("change", (event) => {
+                const file = this.customFileInput.files[0];
+                this.customFileLabel.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = this.canvas;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                        function getPixel(x, y) {
+                            const index = y * canvas.width + x;
+                            const i = index * 4;
+                            return imageData[i] + imageData[i + 1] + imageData[i + 2] > 128 * 3 ? 0 : 1;
+                        }
+
+                        // run canvas content through getPixel and output to canvas2
+                        const canvas2 = this.canvas2;
+                        const ctx2 = canvas2.getContext('2d');
+                        const imageData2 = ctx2.getImageData(0, 0, canvas2.width, canvas2.height);
+                        for (let y = 0; y < canvas2.height; y++) {
+                            for (let x = 0; x < canvas2.width; x++) {
+                                const index = y * canvas2.width + x;
+                                const i = index * 4;
+                                const pixel = !getPixel(x, y);
+                                imageData2.data[i] = pixel * 255;
+                                imageData2.data[i + 1] = pixel * 255;
+                                imageData2.data[i + 2] = pixel * 255;
+                                imageData2.data[i + 3] = 255;
+                            }
+                        }
+                        ctx2.putImageData(imageData2, 0, 0);
+
+                        const outputArray = new Uint8Array((canvas2.width * canvas2.height)/8);
+
+                        let j = 0;
+                        for (let x = 0; x < canvas2.width; x++) {
+                            let byte = 0;
+                            for (let i = 0; i < 8; i++) {
+                                byte |= getPixel(x, i) << i;
+                            }
+                            outputArray[j++] = byte;
+                        }
+
+                        this.customFontData.value = uint8ArrayToHexString(outputArray).toUpperCase();
+                        this.selectCustom.value = this.customFontData.value;
+			            drawFont(this.previewCanvas, hexString(this.selectCustom.value));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            this.customFontData.addEventListener("input", (event) => {
+                const reg = /\\x/g;
+                this.selectCustom.value = event.target.value.replace(reg, "");
+                event.target.value = this.selectCustom.value;
+			    drawFont(this.previewCanvas, hexString(this.selectCustom.value));
+            });
             this.selectCustom.parentElement.parentElement.addEventListener("change", (event) => {
-                this.fontData.parentElement.classList.toggle("d-none", !this.selectCustom.checked);
-			    drawFont(this.previewCanvas, hexString(event.target.value));
+                customFontCardDiv.classList.toggle("d-none", !this.selectCustom.checked);
+			    if (event.target.name == "selectFontSmallDigits") {
+			        drawFont(this.previewCanvas, hexString(event.target.value));
+				}
             });
             this.selectTerminus.checked = true;
             drawFont(this.previewCanvas, hexString(this.selectTerminus.value));
-            this.selectCustom.disabled = true;
-
         }
 
         apply(firmwareData) {
@@ -303,6 +529,10 @@ modClasses = [
             else if (this.selectTerminus.checked) {
                 // const smallDigits = hexString("003E5149453E000000427F400000004661514946000022414949360000181412117F0000274545453900003E45454538000001016119070000364949493600000E5151513E000808080808000000000000000000");
                 firmwareData = replaceSection(firmwareData, hexString(this.selectTerminus.value), offset);
+            }
+            else if (this.selectCustom.checked) {
+//                const smallDigits = hexString("003E414141413E0000427F4000000062515149494600224149494D3200181412117F1000274545454539003E494949493000017109050300003649494949360046494949291E0008080808080000000000000000");
+                firmwareData = replaceSection(firmwareData, hexString(this.selectCustom.value), offset);
             }
 
             log(`Успешно применён: ${this.name}.`);
@@ -329,15 +559,133 @@ modClasses = [
 			this.selectTerminus.value = "00000000000000000000000000000000000000F8F80000000000001B1B000000001E3E00003E1E00000000000000000040F0F040F0F04000041F1F041F1F0400E0F0101C1C30200008191171711F0E006060000080C06000180C06030118180000B0F8C878B080000F1F10110F1F100000203E1E0000000000000000000000000000E0F0180800000000070F1810000000000818F0E00000000010180F070000000040C080C040000001050703070501000000C0C0000000000101070701010000000000000000000000203C1C00000000000000000000000101010101010100000000000000000000000018180000000000000080C06000180C060301000000F0F80888C8F8F0000F1F1311101F0F00002030F8F80000000010101F1F1010003038080888F87000181C1613111010003038888888F870000C1C1010101F0F000080C06030F8F80003030202021F1F00F8F888888888080008181010101F0F00E0F09888888800000F1F1010101F0F0008080808C8F8380000001C1F0300000070F8888888F870000F1F1010101F0F00F0F8080808F8F00000111111190F070000000060600000000000000C0C00000000000060600000000000101C0C000000000080C060301000000103060C1810008080808080808000040404040404040000103060C08000000010180C060301007078080888F870000000001B1B000000E0F0109090F0E0000F1F101717170300F0F8080808F8F0001F1F0101011F1F00F8F8888888F870001F1F1010101F0F00F0F80808083830000F1F1010101C0C00F8F8080818F0E0001F1F1010180F0700F8F88888880808001F1F101010101000F8F88888880808001F1F000000000000F0F80808083830000F1F1011111F0F00F8F8808080F8F8001F1F0000001F1F00000008F8F80800000000101F1F10000000000008F8F808000C1C10101F0F0000F8F8C060301808001F1F03060C181000F8F80000000000001F1F101010101000F8F830E030F8F8001F1F0000001F1F00F8F8C08000F8F8001F1F0001031F1F00F0F8080808F8F0000F1F1010101F0F00F8F8080808F8F0001F1F010101010000F0F8080808F8F0000F1F1018183F2F00F8F8080808F8F0001F1F03070D19100070F88888889810000C1C1010101F0F00000808F8F80808000000001F1F000000F8F8000000F8F8000F1F1010101F0F00F8F8000000F8F80000071F181F070000F8F8000000F8F8001F1F0C070C1F1F001878E080E0781800181E0701071E18000078F88080F878000000001F1F00000008080888C87838001C1E1311101010000000F8F80808000000001F1F1010000070E0C0800000000000000103070E1C0000000808F8F80000000010101F1F000010180C060C1810000000000000000000000000000000000040404040404040400000060E0800000000000000000000000040404040C080000E1F1111111F1F00F8F8404040C080001F1F1010101F0F0080C0404040C080000F1F10101018080080C0404040F8F8000F1F1010101F1F0080C0404040C080000F1F1212121303004040F0F84848080000001F1F0000000080C0404040C0C0000F9F909090FF7F00F8F8404040C080001F1F0000001F1F00000040D8D80000000000101F1F1000000000000040D8D8000060E08080FF7F00F8F8000080C040001F1F02070D181000000008F8F80000000000101F1F100000C0C040C040C080001F1F001F001F1F00C0C0404040C080001F1F0000001F1F0080C0404040C080000F1F1010101F0F00C0C0404040C08000FFFF1010101F0F0080C0404040C0C0000F1F101010FFFF00C0C0C040404040001F1F00000000000080C040404040400011131212121E0C004040F8F84040000000000F1F10101000C0C0000000C0C0000F1F1010101F1F00C0C0000000C0C00001071E181E070100C0C0000000C0C0000F1F101F101F0F00C0C0000000C0C000181D0702071D1800C0C0000000C0C0000F9F909090FF7F0040404040C0C04000181C161311101000000080F0780808000000000F1F10100000000078780000000000001F1F00000000080878F08000000010101F0F00000010180818101808000000000000000000";
             this.selectCustom = addRadioButton(this.modSpecificDiv, "Свой шрифт", "selectCustomLetters", "selectFontLetters");
             this.selectCustom.value = "00000000000000000000000000000000000070F8F87000000000001B1B000000001E3E00003E1E00000000000000000040F0F040F0F04000041F1F041F1F040070F8888F8F983000060C0838380F07006060000080C06000180C06030118180000B0F8C878B080000F1F10110F1F100000203E1E0000000000000000000000000000E0F0180800000000070F1810000000000818F0E00000000010180F0700000040C08080C040000105070303070501000000C0C0000000000101070701010000000000000000000000203C1C00000000000000000000000101010101010100000000000000000000000018180000000000000080C06000180C060301000000F0F8088848F8F0000F1F1211101F0F00002030F8F80000000010101F1F10100010180888C87830001C1E1311101818001018888888F8700008181010101F0F0080C06030F8F80000010101111F1F1100F8F888888888080008181010111F0F00E0F09888888000000F1F1010101F0F001818080888F8780000001E1F0100000070F8888888F870000F1F1010101F0F0070F8888888F8F00000101010180F070000000060600000000000000C0C00000000000060600000000000101C0C000000000080C060301000000103060C1810008080808080808000040404040404040000103060C08000000010180C0603010030380888C87830000000001B1B000000E0F0109090F0E0000F1F101717170300C0E0301830E0C0001F1F0101011F1F0008F8F88888F87000101F1F10101F0F00E0F0180808183000070F181010180C0008F8F80818F0E000101F1F10180F070008F8F888C8183800101F1F1011181C0008F8F888C8183800101F1F1001000000E0F0180808183000070F1811110F1F00F8F8808080F8F8001F1F0000001F1F00000008F8F80800000000101F1F10000000000008F8F808000E1E10101F0F000008F8F880E0781800101F1F01031E1C0008F8F80800000000101F1F1010181C00F8F870E070F8F8001F1F0000001F1F00F8F870E0C0F8F8001F1F0000011F1F00E0F0180818F0E000070F1810180F070008F8F88888F87000101F1F1000000000F0F8080808F8F0000F1F101C787F4F0008F8F88888F87000101F1F00011F1E003078C888883830000C1C1010111F0E00003818F8F81838000000101F1F100000F8F8000000F8F8000F1F1010101F0F00F8F8000000F8F80003070C180C070300F8F8000000F8F800071F1C071C1F07001878E080E0781800181E0701071E18000078F88080F878000000101F1F10000038180888C87838001C1E131110181C000000F8F80808000000001F1F1010000070E0C0800000000000000103070E1C0000000808F8F80000000010101F1F000010180E070E1810000000000000000000000000000000000040404040404040400000070F08000000000000000000000000404040C08000000E1F11110F1F100008F8F840C0800000101F0F10101F0F0080C0404040C080000F1F1010101808000080C048F8F800000F1F10100F1F100080C0404040C080000F1F11111119090080F0F88818300000101F1F100000000080C0404080C040004FDF9090FF7F000008F8F88040C08000101F1F00001F1F00000040D8D80000000000101F1F1000000000000040D8D8000060E08080FF7F0008F8F80080C04000101F1F03071C1800000008F8F80000000000101F1F100000C0C0C080C0C080001F1F001F001F1F0040C0804040C08000001F1F00001F1F0080C0404040C080000F1F1010101F0F0040C0804040C0800080FFFF90101F0F0080C0404080C040000F1F1090FFFF800040C080C040C08000101F1F100000010080C0404040C0800008191312161C08004040F0F84040000000000F1F10180800C0C00000C0C000000F1F10100F1F100000C0C00000C0C00000070F18180F0700C0C0000000C0C0000F1F180E181F0F0040C0800080C0400010180F070F181000C0C0000000C0C0008F9F9090D07F3F00C0C04040C0C04000181C161311181800008080F0780808000000000F1F10100000000078780000000000001F1F00000000080878F08080000010101F0F00000010180818101808000000000000000000";
-            this.fontData = addInputField(this.modSpecificDiv, [], "");
-			this.fontData.parentElement.classList.add("d-none");
+
+            const customFontCardDiv = document.createElement("div");
+            customFontCardDiv.classList.add("d-none", "card", "md-3");
+
+            const customFontDiv = document.createElement("div");
+            customFontDiv.classList.add("card-body");
+
+            const explanationCustomFontFile = document.createElement("p");
+            explanationCustomFontFile.innerText = "Выберите файл изображения со шрифтом, размер картинки в идеале 760 на 16 пикселей. Если у вас нет картинки - можете воспользоваться полем для ввода шестнадцатиричного кода шрифта вручную.";
+            customFontDiv.appendChild(explanationCustomFontFile);
+
+            const fileInputDiv = document.createElement("div");
+            fileInputDiv.classList.add("custom-file", "mt-2");
+            this.customFileInput = document.createElement("input");
+            this.customFileInput.className = "custom-file-input";
+            this.customFileInput.type = "file";
+            this.customFileInput.accept = "image/bmp,image/jpeg,image/png";
+            this.customFileLabel = document.createElement("label");
+            this.customFileLabel.className = "custom-file-label";
+            this.customFileLabel.dataset.browse = "Обзор";
+            this.customFileLabel.innerText = "Выберите картинку";
+            this.customFileLabel.for = "customFileInput";
+            fileInputDiv.appendChild(this.customFileInput);
+            fileInputDiv.appendChild(this.customFileLabel);
+            this.canvas = document.createElement("canvas");
+            this.canvas.classList.add("mt-3", "mr-3", "border", "shadow-sm");
+            this.canvas.width = 760;
+            this.canvas.height = 16;
+            this.canvas2 = this.canvas.cloneNode();
+            fileInputDiv.appendChild(this.canvas);
+            fileInputDiv.appendChild(this.canvas2);
+            customFontDiv.appendChild(fileInputDiv);
+
+            const explanationCustomFontText = document.createElement("p");
+            explanationCustomFontText.innerText = "Итоговый код шрифта в виде шестнадцатиричной строки. По умолчанию здесь код стандартного шрифта. При ручной вставке символы \"\\x\", при наличии, будут удалены автоматически.";
+            customFontDiv.appendChild(explanationCustomFontText);
+
+            this.customFontData = document.createElement("textarea");
+            this.customFontData.classList.add("w-100", "form-control");
+            this.customFontData.rows = 8;
+            // this.customFontData.maxLength = 3040;
+            this.customFontData.placeholder = "Тут должен быть шестнадцатиричный код шрифта, перезагрузите страницу, чтобы сбросить!";
+            this.customFontData.value = this.selectCustom.value;
+            customFontDiv.appendChild(this.customFontData);
+
+            customFontCardDiv.appendChild(customFontDiv);
+            this.modSpecificDiv.appendChild(customFontCardDiv);
+
+            this.customFileInput.addEventListener("change", (event) => {
+                const file = this.customFileInput.files[0];
+                this.customFileLabel.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = this.canvas;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                        function getPixel(x, y) {
+                            const index = y * canvas.width + x;
+                            const i = index * 4;
+                            return imageData[i] + imageData[i + 1] + imageData[i + 2] > 128 * 3 ? 0 : 1;
+                        }
+
+                        // run canvas content through getPixel and output to canvas2
+                        const canvas2 = this.canvas2;
+                        const ctx2 = canvas2.getContext('2d');
+                        const imageData2 = ctx2.getImageData(0, 0, canvas2.width, canvas2.height);
+                        for (let y = 0; y < canvas2.height; y++) {
+                            for (let x = 0; x < canvas2.width; x++) {
+                                const index = y * canvas2.width + x;
+                                const i = index * 4;
+                                const pixel = !getPixel(x, y);
+                                imageData2.data[i] = pixel * 255;
+                                imageData2.data[i + 1] = pixel * 255;
+                                imageData2.data[i + 2] = pixel * 255;
+                                imageData2.data[i + 3] = 255;
+                            }
+                        }
+                        ctx2.putImageData(imageData2, 0, 0);
+
+                        const outputArray = new Uint8Array((canvas2.width * canvas2.height)/8);
+
+                        let j = 0;
+                        for (let xs = 0; xs < canvas2.width; xs += 8) {
+                            let y = 0;
+                            for (let x = xs; x < (xs + 8); x++) {
+                                let byte = 0;
+                                for (let i = 0; i < 8; i++) {
+                                    byte |= getPixel(x, y + i) << i;
+                                }
+                                outputArray[j++] = byte;
+                            }
+                            y = 8;
+                            for (let x = xs; x < (xs + 8); x++) {
+                                let byte = 0;
+                                for (let i = 0; i < 8; i++) {
+                                    byte |= getPixel(x, y + i) << i;
+                                }
+                                outputArray[j++] = byte;
+                            }
+                        }
+
+                        this.customFontData.value = uint8ArrayToHexString(outputArray).toUpperCase();
+                        this.selectCustom.value = this.customFontData.value;
+			            drawFont(this.previewCanvas, font8to16(hexString(this.selectCustom.value), 8));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            this.customFontData.addEventListener("input", (event) => {
+                const reg = /\\x/g;
+                this.selectCustom.value = event.target.value.replace(reg, "");
+                event.target.value = this.selectCustom.value;
+			    drawFont(this.previewCanvas, font8to16(hexString(this.selectCustom.value), 8));
+            });
             this.selectCustom.parentElement.parentElement.addEventListener("change", (event) => {
-                this.fontData.parentElement.classList.toggle("d-none", !this.selectCustom.checked);
-			    drawFont(this.previewCanvas, font8to16(hexString(event.target.value), 8));
+                customFontCardDiv.classList.toggle("d-none", !this.selectCustom.checked);
+			    if (event.target.name == "selectFontLetters") {
+			        drawFont(this.previewCanvas, font8to16(hexString(event.target.value), 8));
+				}
             });
             this.selectTerminus.checked = true;
             drawFont(this.previewCanvas, font8to16(hexString(this.selectTerminus.value), 8));
-            this.selectCustom.disabled = true;
 
         }
 
@@ -351,6 +699,10 @@ modClasses = [
             else if (this.selectTerminus.checked) {
                 // const letters = hexString("00000000000000000000000000000000000000F8F80000000000001B1B000000001E3E00003E1E00000000000000000040F0F040F0F04000041F1F041F1F0400E0F0101C1C30200008191171711F0E006060000080C06000180C06030118180000B0F8C878B080000F1F10110F1F100000203E1E0000000000000000000000000000E0F0180800000000070F1810000000000818F0E00000000010180F070000000040C080C040000001050703070501000000C0C0000000000101070701010000000000000000000000203C1C00000000000000000000000101010101010100000000000000000000000018180000000000000080C06000180C060301000000F0F80888C8F8F0000F1F1311101F0F00002030F8F80000000010101F1F1010003038080888F87000181C1613111010003038888888F870000C1C1010101F0F000080C06030F8F80003030202021F1F00F8F888888888080008181010101F0F00E0F09888888800000F1F1010101F0F0008080808C8F8380000001C1F0300000070F8888888F870000F1F1010101F0F00F0F8080808F8F00000111111190F070000000060600000000000000C0C00000000000060600000000000101C0C000000000080C060301000000103060C1810008080808080808000040404040404040000103060C08000000010180C060301007078080888F870000000001B1B000000E0F0109090F0E0000F1F101717170300F0F8080808F8F0001F1F0101011F1F00F8F8888888F870001F1F1010101F0F00F0F80808083830000F1F1010101C0C00F8F8080818F0E0001F1F1010180F0700F8F88888880808001F1F101010101000F8F88888880808001F1F000000000000F0F80808083830000F1F1011111F0F00F8F8808080F8F8001F1F0000001F1F00000008F8F80800000000101F1F10000000000008F8F808000C1C10101F0F0000F8F8C060301808001F1F03060C181000F8F80000000000001F1F101010101000F8F830E030F8F8001F1F0000001F1F00F8F8C08000F8F8001F1F0001031F1F00F0F8080808F8F0000F1F1010101F0F00F8F8080808F8F0001F1F010101010000F0F8080808F8F0000F1F1018183F2F00F8F8080808F8F0001F1F03070D19100070F88888889810000C1C1010101F0F00000808F8F80808000000001F1F000000F8F8000000F8F8000F1F1010101F0F00F8F8000000F8F80000071F181F070000F8F8000000F8F8001F1F0C070C1F1F001878E080E0781800181E0701071E18000078F88080F878000000001F1F00000008080888C87838001C1E1311101010000000F8F80808000000001F1F1010000070E0C0800000000000000103070E1C0000000808F8F80000000010101F1F000010180C060C1810000000000000000000000000000000000040404040404040400000060E0800000000000000000000000040404040C080000E1F1111111F1F00F8F8404040C080001F1F1010101F0F0080C0404040C080000F1F10101018080080C0404040F8F8000F1F1010101F1F0080C0404040C080000F1F1212121303004040F0F84848080000001F1F0000000080C0404040C0C0000F9F909090FF7F00F8F8404040C080001F1F0000001F1F00000040D8D80000000000101F1F1000000000000040D8D8000060E08080FF7F00F8F8000080C040001F1F02070D181000000008F8F80000000000101F1F100000C0C040C040C080001F1F001F001F1F00C0C0404040C080001F1F0000001F1F0080C0404040C080000F1F1010101F0F00C0C0404040C08000FFFF1010101F0F0080C0404040C0C0000F1F101010FFFF00C0C0C040404040001F1F00000000000080C040404040400011131212121E0C004040F8F84040000000000F1F10101000C0C0000000C0C0000F1F1010101F1F00C0C0000000C0C00001071E181E070100C0C0000000C0C0000F1F101F101F0F00C0C0000000C0C000181D0702071D1800C0C0000000C0C0000F9F909090FF7F0040404040C0C04000181C161311101000000080F0780808000000000F1F10100000000078780000000000001F1F00000000080878F08000000010101F0F00000010180818101808000000000000000000");
                 firmwareData = replaceSection(firmwareData, hexString(this.selectTerminus.value), offset);
+            }
+            else if (this.selectCustom.checked) {
+//                const letters = hexString("00000000000000000000000000000000000070F8F87000000000001B1B000000001E3E00003E1E00000000000000000040F0F040F0F04000041F1F041F1F040070F8888F8F983000060C0838380F07006060000080C06000180C06030118180000B0F8C878B080000F1F10110F1F100000203E1E0000000000000000000000000000E0F0180800000000070F1810000000000818F0E00000000010180F0700000040C08080C040000105070303070501000000C0C0000000000101070701010000000000000000000000203C1C00000000000000000000000101010101010100000000000000000000000018180000000000000080C06000180C060301000000F0F8088848F8F0000F1F1211101F0F00002030F8F80000000010101F1F10100010180888C87830001C1E1311101818001018888888F8700008181010101F0F0080C06030F8F80000010101111F1F1100F8F888888888080008181010111F0F00E0F09888888000000F1F1010101F0F001818080888F8780000001E1F0100000070F8888888F870000F1F1010101F0F0070F8888888F8F00000101010180F070000000060600000000000000C0C00000000000060600000000000101C0C000000000080C060301000000103060C1810008080808080808000040404040404040000103060C08000000010180C0603010030380888C87830000000001B1B000000E0F0109090F0E0000F1F101717170300C0E0301830E0C0001F1F0101011F1F0008F8F88888F87000101F1F10101F0F00E0F0180808183000070F181010180C0008F8F80818F0E000101F1F10180F070008F8F888C8183800101F1F1011181C0008F8F888C8183800101F1F1001000000E0F0180808183000070F1811110F1F00F8F8808080F8F8001F1F0000001F1F00000008F8F80800000000101F1F10000000000008F8F808000E1E10101F0F000008F8F880E0781800101F1F01031E1C0008F8F80800000000101F1F1010181C00F8F870E070F8F8001F1F0000001F1F00F8F870E0C0F8F8001F1F0000011F1F00E0F0180818F0E000070F1810180F070008F8F88888F87000101F1F1000000000F0F8080808F8F0000F1F101C787F4F0008F8F88888F87000101F1F00011F1E003078C888883830000C1C1010111F0E00003818F8F81838000000101F1F100000F8F8000000F8F8000F1F1010101F0F00F8F8000000F8F80003070C180C070300F8F8000000F8F800071F1C071C1F07001878E080E0781800181E0701071E18000078F88080F878000000101F1F10000038180888C87838001C1E131110181C000000F8F80808000000001F1F1010000070E0C0800000000000000103070E1C0000000808F8F80000000010101F1F000010180E070E1810000000000000000000000000000000000040404040404040400000070F08000000000000000000000000404040C08000000E1F11110F1F100008F8F840C0800000101F0F10101F0F0080C0404040C080000F1F1010101808000080C048F8F800000F1F10100F1F100080C0404040C080000F1F11111119090080F0F88818300000101F1F100000000080C0404080C040004FDF9090FF7F000008F8F88040C08000101F1F00001F1F00000040D8D80000000000101F1F1000000000000040D8D8000060E08080FF7F0008F8F80080C04000101F1F03071C1800000008F8F80000000000101F1F100000C0C0C080C0C080001F1F001F001F1F0040C0804040C08000001F1F00001F1F0080C0404040C080000F1F1010101F0F0040C0804040C0800080FFFF90101F0F0080C0404080C040000F1F1090FFFF800040C080C040C08000101F1F100000010080C0404040C0800008191312161C08004040F0F84040000000000F1F10180800C0C00000C0C000000F1F10100F1F100000C0C00000C0C00000070F18180F0700C0C0000000C0C0000F1F180E181F0F0040C0800080C0400010180F070F181000C0C0000000C0C0008F9F9090D07F3F00C0C04040C0C04000181C161311181800008080F0780808000000000F1F10100000000078780000000000001F1F00000000080878F08080000010101F0F00000010180818101808000000000000000000");
+                firmwareData = replaceSection(firmwareData, hexString(this.selectCustom.value), offset);
             }
 
             log(`Успешно применён: ${this.name}.`);
@@ -378,6 +730,7 @@ modClasses = [
             this.customFileInput.accept = "image/bmp,image/jpeg,image/png";
             this.customFileLabel = document.createElement("label");
             this.customFileLabel.className = "custom-file-label";
+            this.customFileLabel.dataset.browse = "Обзор";
             this.customFileLabel.innerText = "Выберите картинку";
             this.customFileLabel.for = "customFileInput";
             fileInputDiv.appendChild(this.customFileInput);
@@ -1239,6 +1592,7 @@ modClasses = [
 
             this.menuStringsTextarea = document.createElement("textarea");
             this.menuStringsTextarea.classList.add("w-100", "form-control");
+            this.menuStringsTextarea.rows = "7";
             this.menuStringsTextarea.placeholder = "Тут должен быть JSON -объект, перезагрузите страницу, чтобы сбросить!";
             this.menuStringsTextarea.value = JSON.stringify(strings, null, 2);
 
