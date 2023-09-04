@@ -9,7 +9,7 @@
   <meta property="og:site_name" content=UVMOD>
   <meta property="og:url" content=https://uvmod.valek.net.ru/v26/ />
   <meta property="og:description"
-    content="Веб-сервис генерации кастомизированных прошивок для различных носимых раций Quansheng.">
+    content="Веб-сервис генерации кастомизированных прошивок, настройки конфигурации и прошивки носимых раций Quansheng.">
   <meta property="og:type" content=website>
   <meta property="og:image" content=img/banner.webp>
 
@@ -29,20 +29,17 @@
       height: 100%;
     }
 
-    body {
+    .bg-animated {
       min-height: 100%;
-      background: linear-gradient(-45deg, #ee9052, #e05578, #5abde0, #23d5ab);
+      background: linear-gradient(-45deg, #555555, #494949, #5e73b3, #4e73df);
       background-size: 400% 400%;
       background-attachment: fixed;
-      animation: gradient 30s ease infinite;
+      animation: gradient 5s ease;
+      animation-fill-mode: forwards;
     }
 
     @keyframes gradient {
       0% {
-        background-position: 0% 50%;
-      }
-
-      50% {
         background-position: 100% 50%;
       }
 
@@ -56,6 +53,7 @@
       left: 0;
       position: absolute;
       top: 0;
+      z-index: 999999;
     }
 
     @keyframes fadeInFromTop {
@@ -86,8 +84,24 @@
       }
     }
 
-    #content {
+    @keyframes fadeInFromLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .fade-in-from-bottom {
       animation: fadeInFromBottom 0.7s ease-out;
+    }
+
+    .fade-in-from-left {
+      animation: fadeInFromLeft 0.7s ease-out;
     }
 
     checkbox {
@@ -105,45 +119,39 @@
   </svg>
 </div>
 
-<body id="page-top" class="bg-dark">
+<body id="page-top" class="bg-animated">
+
+  <div class="d-block px-2 py-2 text-center text-bold bg-danger">
+    <a href="https://github.com/whosmatt/uvmod#statement-regarding-dangerous-clones-of-uvmod"
+      class="text-white">Внимание: Существуют модифицированные копии UVMOD, которые не учитывают требования по безопасности.
+	  Сверяйтесь с репозиторием автора для получения ссылок на проверенные версии! Нажмите здесь, чтобы узнать больше.</a>
+  </div>
 
   <!-- Page Wrapper -->
-  <div id="wrapper animated--grow-in">
+  <div id="wrapper animated--grow-in" class="wrapper">
+
+    <!-- Sidebar -->
+    <div id="navbar-placeholder" class="sidebar toggled"></div>
+    <script src="js/navbar.js"></script>
 
     <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column" style="background-color: inherit;">
-
-      <div class="d-block px-2 py-2 text-center text-bold bg-danger">
-        <a href="https://github.com/whosmatt/uvmod#statement-regarding-dangerous-clones-of-uvmod" class="text-white">Внимание: Существуют модифицированные копии UVMOD, которые не учитывают требования по безопасности. Сверяйтесь с репозиторием автора для получения ссылок на проверенные версии! Нажмите здесь, чтобы узнать больше.</a>
-      </div>
+    <div id="content-wrapper" class="w-100">
 
       <!-- Main Content -->
-      <div id="content">
+      <div id="content" class="fade-in-from-bottom">
 
         <!-- Begin Page Content -->
         <div class="container mt-4" style="max-width: 1440px;">
 
-          <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 id="logo" class="h3 mb-0 text-white" style="text-shadow: 0px 0px 5px #ffffffa6; font-size: 3em;">UVMOD
-            </h1>
-            <button class="d-sm-inline-block btn btn-sm btn-light shadow-lg" type="button" data-toggle="collapse"
-              data-target="#instructions">&nbsp;Инструкция&nbsp;</button>
-          </div>
-
-          <div id="instructions" class="row collapse">
+          <div class="row">
             <div class="col-lg-12">
               <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex">
-                  <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Инструкция</h6>
-				  </div>
-                  <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="https://github.com/valekrus/uvmod-russian">GitHub &rarr;</a>
-                </div>
-                <div class="card-body">
-                  <h2 class="mb-4">UVMOD</h2>
-                  <p>Эта страничка позволит вам собрать кастомизированную прошивку для Quansheng UV-K5, UV-K6, UV-K5(8),
+                <a href="#instructions" class="d-block card-header py-3" data-toggle="collapse" role="button">
+                  <h6 class="m-0 font-weight-bold text-primary">Инструкция</h6>
+                </a>
+                <div id="instructions" class="card-body collapse">
+                  <h2 class="mb-4">UVMOD конструктор и программатор</h2>
+                  <p>Эта страничка позволит вам кастомизировать оригинальную прошивку для Quansheng UV-K5, UV-K6, UV-K5(8),
                      и UV-5R Plus. Для прошивки потребуется кабель для связи с рацией и установленные для него драйвера.</p>
 
                   <h3 class="mt-4">Использование</h3>
@@ -283,7 +291,7 @@
                   </div>
 
                   <div class="mt-2">
-                    <a id="patchButton" onclick="patch()" class="btn btn-primary btn-icon-split w-100">
+                    <a id="patchButton" class="btn btn-primary btn-icon-split w-100">
                       <span class="icon text-white-50">
                         <i class="fas fa-wrench"></i>
                       </span>
@@ -297,7 +305,7 @@
                       </span>
                       <span class="text w-100">Скачать</span>
                     </a>
-                    <a id="flashButton" onclick="startFlasher()" class="btn btn-dark btn-icon-split disabled w-100">
+                    <a id="flashButton" class="btn btn-dark btn-icon-split disabled w-100">
                       <span class="icon text-white-50">
                         <i class="fab fa-usb"></i>
                       </span>
@@ -334,10 +342,10 @@
 
   <!-- Patcher JavaScript -->
   <script src="js/fwpack.js"></script>
-  <script src="js/qsflash.js"></script>
+  <script src="js/qsSerial.js"></script>
   <script src="js/modframework.js"></script>
   <script src="mods.js"></script>
-  <script src="js/init.js"></script>
+  <script src="js/tool_patcher.js"></script>
 
   <!-- Easter egg, click the title -->
   <script>
@@ -415,7 +423,7 @@
     })(jQuery, window);
 
     var marqueeified = false;
-    $("#logo").click(function () {
+    function easterEgg() {
       $('.marquee').toggle();
       if (!marqueeified) {
         $('.marquee').marqueeify({
@@ -427,11 +435,9 @@
         });
         marqueeified = true;
       }
-    });
+    };
   </script>
 
-<footer class="card sticky-footer"><div class="copyright card-body">Сделано на основе <a href="https://github.com/whosmatt/uvmod" target="_blank">UVMOD by whosmatt</div></footer>
-</body>
 
 </body>
 
