@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:title" content="UVMOD - онлайн модификатор прошивок раций Quansheng">
+  <meta property="og:site_name" content=UVMOD>
+  <meta property="og:url" content=https://uvmod.valek.net.ru/v27/ />
+  <meta property="og:description"
+    content="Веб-сервис генерации кастомизированных прошивок, настройки конфигурации и прошивки носимых раций Quansheng.">
+  <meta property="og:type" content=website>
+  <meta property="og:image" content=img/banner.webp>
+
+  <title>UVMOD</title>
+
+  <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+  <!-- Custom fonts for this template-->
+  <link href="fonts/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="fonts/nunito.css" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- animated gradient background and other animations-->
+  <style>
+    html {
+      height: 100%;
+    }
+
+    .bg-animated {
+      min-height: 100%;
+      background: linear-gradient(-45deg, #555555, #494949, #5e73b3, #4e73df);
+      background-size: 400% 400%;
+      background-attachment: fixed;
+      animation: gradient 5s ease;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .marquee {
+      display: none;
+      left: 0;
+      position: absolute;
+      top: 0;
+      z-index: 999999;
+    }
+
+    @keyframes fadeInFromTop {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-body {
+      animation: fadeInFromTop 1s ease-in-out;
+    }
+
+    @keyframes fadeInFromBottom {
+      from {
+        opacity: 0;
+        transform: translateY(+10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInFromLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .fade-in-from-bottom {
+      animation: fadeInFromBottom 0.7s ease-out;
+    }
+
+    .fade-in-from-left {
+      animation: fadeInFromLeft 0.7s ease-out;
+    }
+
+    checkbox {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<div class="marquee">
+  <svg width="153px" height="69px">
+    <g>
+      <path class="logo"
+        d="M140.186,63.52h-1.695l-0.692,5.236h-0.847l0.77-5.236h-1.693l0.076-0.694h4.158L140.186,63.52L140.186,63.52z M146.346,68.756h-0.848v-4.545l0,0l-2.389,4.545l-1-4.545l0,0l-1.462,4.545h-0.771l1.924-5.931h0.695l0.924,4.006l2.078-4.006 h0.848V68.756L146.346,68.756z M126.027,0.063H95.352c0,0-8.129,9.592-9.654,11.434c-8.064,9.715-9.523,12.32-9.779,13.02 c0.063-0.699-0.256-3.304-3.686-13.148C71.282,8.7,68.359,0.062,68.359,0.062H57.881V0L32.35,0.063H13.169l-1.97,8.131 l14.543,0.062h3.365c9.336,0,15.055,3.747,13.467,10.354c-1.717,7.24-9.91,10.416-18.545,10.416h-3.24l4.191-17.783H10.502 L4.34,37.219h20.578c15.432,0,30.168-8.13,32.709-18.608c0.508-1.906,0.443-6.67-0.764-9.527c0-0.127-0.063-0.191-0.127-0.444 c-0.064-0.063-0.127-0.509,0.127-0.571c0.128-0.062,0.383,0.189,0.445,0.254c0.127,0.317,0.19,0.57,0.19,0.57l13.083,36.965 l33.344-37.6h14.1h3.365c9.337,0,15.055,3.747,13.528,10.354c-1.778,7.24-9.972,10.416-18.608,10.416h-3.238l4.191-17.783h-14.481 l-6.159,25.976h20.576c15.434,0,30.232-8.13,32.709-18.608C152.449,8.193,141.523,0.063,126.027,0.063L126.027,0.063z M71.091,45.981c-39.123,0-70.816,4.512-70.816,10.035c0,5.59,31.693,10.034,70.816,10.034c39.121,0,70.877-4.444,70.877-10.034 C141.968,50.493,110.212,45.981,71.091,45.981L71.091,45.981z M68.55,59.573c-8.956,0-16.196-1.523-16.196-3.365 c0-1.84,7.239-3.303,16.196-3.303c8.955,0,16.195,1.463,16.195,3.303C84.745,58.05,77.505,59.573,68.55,59.573L68.55,59.573z" />
+    </g>
+  </svg>
+</div>
+
+<body id="page-top" class="bg-animated">
+
+  <div class="d-block px-2 py-2 text-center text-bold bg-danger">
+    <a href="https://github.com/whosmatt/uvmod#statement-regarding-dangerous-clones-of-uvmod"
+      class="text-white">Внимание: Существуют модифицированные копии UVMOD, которые не учитывают требования по безопасности.
+	  Сверяйтесь с репозиторием автора для получения ссылок на проверенные версии! Нажмите здесь, чтобы узнать больше.</a>
+  </div>
+
+  <!-- Page Wrapper -->
+  <div id="wrapper animated--grow-in" class="wrapper">
+
+    <!-- Sidebar -->
+    <div id="navbar-placeholder" class="sidebar toggled"></div>
+    <script src="js/navbar.js"></script>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="w-100">
+
+      <!-- Main Content -->
+      <div id="content" class="fade-in-from-bottom">
+
+        <!-- Begin Page Content -->
+        <div class="container mt-4" style="max-width: 1440px;">
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card shadow mb-4">
+                <a href="#instructions" class="d-block card-header py-3" data-toggle="collapse" role="button">
+                  <h6 class="m-0 font-weight-bold text-primary">Инструкция</h6>
+                </a>
+                <div id="instructions" class="card-body collapse">
+                  <h2 class="mb-4">UVMOD конструктор и программатор</h2>
+                  <p>Эта страничка позволит вам кастомизировать оригинальную прошивку для Quansheng UV-K5, UV-K6, UV-K5(8),
+                     и UV-5R Plus. Для прошивки потребуется кабель для связи с рацией и установленные для него драйвера.</p>
+
+                  <h3 class="mt-4">Использование</h3>
+                  <ol>
+                    <li>Выберите нужные модификации и настройте их, при необходимости. В описании каждому моду есть
+                      подробности о настройке.</li>
+                    <li>В правой части страницы выберите соответствующую модель вашей рации. Программа для прошивки не
+                      даст прошить, если будет выбрана не та модель. Также вы можете оставить вариант по умолчанию
+                      "Для всех раций", который позволяет создать прошивку, которая будет принята любой моделью.</li>
+                    <li>Нажмите "Собрать" и в окне консоли отобразится размер прошивки при успешной сборке, а также
+                      ошибки, если они возникнут. Если возникает ошибка по превышению размера - стоит отключить некоторые
+                      модификации, чтобы освободить место, и попытаться ещё раз.</li>
+                    <li>Нажмите "Скачать" чтобы скачать файл с собранной прошивкой.</li>
+                  </ol>
+
+                  <h3 class="mt-4">Пришивка при помощи UVMOD</h3>
+                  <p>Современные браузеры на основе Chromium, такие как Chrome, Edge, Opera и Яндекс.Браузер имеют API,
+                   который позволяет UVMOD прошить вашу рацию прямо из браузера. Это самый простой способ прошики,
+                   который, однако, работает только в Windows и Linux.</p>
+                  <p>Для Windows, вам необходим установленный драйвер для вашего кабеля. Обычно кабель использует ch340,
+                   ch341 или cp210x. В Linux драйвер, скорее всего, уже присутствует. </p>
+                  <ol>
+                    <li>Подключите кабель к компьютеру и убедитесь, что на него установлены корректные драйвера. Он
+                      должен определиться как COM-порт.</li>
+                    <li>На рации (которая всё ещё отключена от кабеля и выключена) зажмите кнопку PTT (кнопка передачи,
+                      большая кнопка сбоку) и не отпуская её включите рацию. Должен загореться светодиод фонарика, а
+                      на экране не будет ничего отображаться. Теперь рация в режиме обновления.</li>
+                    <li>Подключите кабель к рации (до конца, на новых рациях кабель может входить достаточно туго). На
+                      рации загорится синий светодиод.</li>
+                    <li>Нажмите "Прошить" и ожидайте завершения процесса. Прогресс прошивки отображается в консоли. </li>
+                    <li>Готово, прошивка обновлена. После прошивки настройки рации НЕ сбрасываются автоматически.</li>
+                  </ol>
+
+                  <h3 class="mt-4">Прошивка официальным ПО</h3>
+                  <p>При использовании Windows, вы можете воспользоваться официальной программой для прошивки. Её можно
+                    скачать с этого сайта по ссылке в окне консоли.</p>
+                  <ol>
+                    <li>Подключите кабель к компьютеру и убедитесь, что на него установлены корректные драйвера. В
+                      менеджере устройств он будет отображаться в секции "Порты (COM и LPT)" как COM-порт.</li>
+                    <li>Запустите программу для прошивки, выберите соответствующий COM-порт и нажмите "Connect".</li>
+                    <li>Укажите файл с прошивкой в поле "Program file".</li>
+                    <li>На рации (которая всё ещё отключена от кабеля и выключена) зажмите кнопку PTT (кнопка передачи,
+                      большая кнопка сбоку) и не отпуская её включите рацию. Должен загореться светодиод фонарика, а
+                      на экране не будет ничего отображаться. Теперь рация в режиме обновления.</li>
+                    <li>Подключите кабель к рации (до конца, на новых рациях кабель может входить достаточно туго).
+                      Кнопка "Update" в программе для прошивке станет доступной, а на рации загорится синий светодиод.</li>
+                    <li>Нажмите на кнопку "Update" и ждите завершения процесса. В процессе фонарик и синий светодиод
+                      могут моргать, это нормально.</li>
+                    <li>Готово, прошивка обновлена. После прошивки настройки рации НЕ сбрасываются автоматически.</li>
+                  </ol>
+                  <h3 class="mt-4">Скрытые модификации</h3>
+                  <p>Некоторые моды не отображаются в списке по умолчанию по причине небезопасности их использования.
+                    Их можно включить здесь. Пожалуйста, обратите внимание на следующие ВАЖНЫЕ моменты:</p>
+                  <ul>
+                    <li><b>Используйте моды на расширение частот передачи только если понимаете что такое гармоники, а
+                         также имеете оборудование для фильтрации нежелательных гармоник!</b></li>
+                    <li><b>Ни в коем случае не выходите на передачу на авиачастотах или не мешайте работе другого
+                         оборудования!</b></li>
+                    <li>Передача на частотах вне разрешённых диапазонов может привести к штрафам с конфискацией или даже
+                      уголовной ответственности.</li>
+                    <li>Аппаратная начинка радиостанции настроена только на диапазоны VHF и UHF. Включение передачи вне
+                      этих диапазонов не изменит аппаратную конфигурацию радиостанции.
+                      На частотах вне диапазонов VHF и UHF, рация работает с крайне малой мощностью и большим КСВ, что
+                      может привести к повреждению рации.
+                      Что ещё хуже, рация будет выдавать множество гармоник на соседних частотах, причём сигнал на них
+                      будет даже сильнее, чем на выбранной частоте.
+                      <b>Например при передаче в диапазоне CB мощность на выбранной частоте  будет в микроВаттах, а на
+                       частотах гармоник сигнал будет в несколько раз сильнее.</b>
+                    </li>
+                    </li>
+                    <li>ВЫ и только ВЫ несёте ответственность за свои дейстия!</li>
+                  </ul>
+                  <p>Если вы согласны с вышеуказанным, вы можете отобразить скрытые моды <a
+                      onclick="showHiddenMods()" class="card-link" style="cursor: pointer;"><b>нажав здесь.</b></a>
+                  </p>
+                  <p>Моды отобразятся в общем списке с красной рамкой и заголовком.</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <div class="col mb-4">
+              <!-- Mods -->
+              <div class="card shadow-lg mb-4">
+                <div class="card-header py-3 d-flex">
+                  <div class="mr-auto">
+                    <h6 class="m-0 font-weight-bold text-primary">Модификации</h6>
+                  </div>
+                  <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
+                    href="https://t.me/uv_k5/34434">Группа в ТГ &rarr;</a>
+                </div>
+                <div id="modsContainer" class="card-body">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+              <!-- Console -->
+              <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
+                <div class="card-header py-3 d-flex">
+                  <div class="mr-auto">
+                    <h6 class="m-0 font-weight-bold text-primary">Консоль</h6>
+                  </div>
+                  <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
+                    href="fw/uvk5updater.zip">Программа для прошивки &rarr;</a>
+                </div>
+                <div class="card-body">
+                  <div>
+                    <div class="d-flex justify-content-center">
+                      <textarea id="console" class="w-100 form-control" style="height: 10em;" readonly></textarea>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="input-group mt-4">
+                      <div id="useDefaultFirmwareDiv" class="input-group-prepend" style="cursor:pointer">
+                        <div class="input-group-text">
+                          <input id="useDefaultFirmware" type="checkbox" checked style="cursor: pointer;">
+                        </div>
+                      </div>
+                      <div id="customFileInputDiv" class="custom-file d-none">
+                        <input id="customFileInput" type="file" class="custom-file-input">
+                        <label id="customFileLabel" class="custom-file-label" for="customFileInput">Выбрать файл
+                          (только v27)</label>
+                      </div>
+                      <span id="useDefaultFirmwareSpan" class="form-control" readonly>Использовать оригинальную v27</span>
+                    </div>
+                    <select class="form-control mt-2" id="firmwareVersionSelect">
+                      <option value="*">Для всех раций</option>
+                      <option value="2">Для UV-K5, UV-K5(8)</option>
+                      <option value="3">Для UV-K6</option>
+                      <option value="4">Для UV-5R Plus</option>
+                    </select>
+                  </div>
+
+                  <div class="mt-2">
+                    <a id="patchButton" class="btn btn-primary btn-icon-split w-100">
+                      <span class="icon text-white-50">
+                        <i class="fas fa-wrench"></i>
+                      </span>
+                      <span class="text w-100">Собрать</span>
+                    </a>
+                  </div>
+                  <div class="mt-2 d-flex">
+                    <a id="downloadButton" class="btn btn-dark btn-icon-split mr-1 disabled w-100">
+                      <span class="icon text-white-50">
+                        <i class="fas fa-download"></i>
+                      </span>
+                      <span class="text w-100">Скачать</span>
+                    </a>
+                    <a id="flashButton" class="btn btn-dark btn-icon-split disabled w-100">
+                      <span class="icon text-white-50">
+                        <i class="fab fa-usb"></i>
+                      </span>
+                      <span class="text w-100">Прошить</span>
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="js/vendor/jquery.min.js"></script>
+  <script src="js/vendor/bootstrap.bundle.min.js"></script>
+  <script src="js/vendor/bs-custom-file-input.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+
+  <!-- Patcher JavaScript -->
+  <script src="js/fwpack.js"></script>
+  <script src="js/qsSerial.js"></script>
+  <script src="js/modframework.js"></script>
+  <script src="mods_v27.js"></script>
+  <script src="js/tool_patcher_v27.js"></script>
+
+  <!-- Easter egg, click the title -->
+  <script>
+    const marqueediv = document.getElementById("marquee");
+
+    (function ($, window, undefined) {
+      $.fn.marqueeify = function (options) {
+        var settings = $.extend({
+          horizontal: true,
+          vertical: true,
+          speed: 100, // In pixels per second
+          container: $(this).parent(),
+          bumpEdge: function () { }
+        }, options);
+
+        return this.each(function () {
+          var containerWidth, containerHeight, elWidth, elHeight, move, getSizes,
+            $el = $(this);
+
+          getSizes = function () {
+            containerWidth = settings.container.outerWidth();
+            containerHeight = settings.container.outerHeight();
+            elWidth = $el.outerWidth();
+            elHeight = $el.outerHeight();
+          };
+
+          move = {
+            right: function () {
+              $el.animate({ left: (containerWidth - elWidth) }, {
+                duration: ((containerWidth / settings.speed) * 1000), queue: false, easing: "linear", complete: function () {
+                  settings.bumpEdge();
+                  move.left();
+                }
+              });
+            },
+            left: function () {
+              $el.animate({ left: 0 }, {
+                duration: ((containerWidth / settings.speed) * 1000), queue: false, easing: "linear", complete: function () {
+                  settings.bumpEdge();
+                  move.right();
+                }
+              });
+            },
+            down: function () {
+              $el.animate({ top: (containerHeight - elHeight) }, {
+                duration: ((containerHeight / settings.speed) * 1000), queue: false, easing: "linear", complete: function () {
+                  settings.bumpEdge();
+                  move.up();
+                }
+              });
+            },
+            up: function () {
+              $el.animate({ top: 0 }, {
+                duration: ((containerHeight / settings.speed) * 1000), queue: false, easing: "linear", complete: function () {
+                  settings.bumpEdge();
+                  move.down();
+                }
+              });
+            }
+          };
+          getSizes();
+          if (settings.horizontal) {
+            move.right();
+          }
+          if (settings.vertical) {
+            move.down();
+          }
+
+          // Make that shit responsive!
+          $(window).resize(function () {
+            getSizes();
+          });
+        });
+      };
+    })(jQuery, window);
+
+    var marqueeified = false;
+    function easterEgg() {
+      $('.marquee').toggle();
+      if (!marqueeified) {
+        $('.marquee').marqueeify({
+          speed: 150,
+          bumpEdge: function () {
+            var newColor = "hsl(" + Math.floor(Math.random() * 360) + ", 100%, 50%)";
+            $('.marquee .logo').css('fill', newColor);
+          }
+        });
+        marqueeified = true;
+      }
+    };
+  </script>
+
+
+</body>
+
+</html>
