@@ -1974,7 +1974,7 @@ modClasses = [
                 }
                 const dataView = new DataView(shellcode.buffer);
                 const lowFreq = Math.floor(this.lowFreq.value / 10);
-                const highFreq = Math.floor(this.highFreq.value / 10);
+                const highFreq = Math.floor(this.highFreq.value / 10) + 1;
                 dataView.setUint32(32, lowFreq, true);
                 dataView.setUint32(36, highFreq, true);
 			    
