@@ -1888,7 +1888,7 @@ modClasses = [
     class Mod_FrequencyRangeAdvanced extends FirmwareMod {
         constructor() {
             super("Диапазоны частот", "Позволяет изменить диапазоны приёма в пределах от 18 МГц до 1300 МГц. Диапазоны передачи не изменяются.", 0);
-            this.selectSimple = addRadioButton(this.modSpecificDiv, "Простой режим: Расширить 1-й диапазон вниз до указанной минимальной частоты, а 7-й диапазон вверх до указанной максимальной частоты.", "selectSimpleMode", "selectFrequencyRange");
+            this.selectSimple = addRadioButton(this.modSpecificDiv, "Простой режим: Расширить 1-й диапазон вниз до указанной минимальной частоты и вверх до 107.999МГц, а 7-й диапазон вверх до указанной максимальной частоты.", "selectSimpleMode", "selectFrequencyRange");
             this.selectCustom = addRadioButton(this.modSpecificDiv, "Расширенный режим: Позволяет вручную изменить сетку диапазонов рации.", "selectCustomMode", "selectFrequencyRange");
             this.selectSimple.checked = true;
 
@@ -1945,6 +1945,12 @@ modClasses = [
 			    
                     firmwareData = replaceSection(firmwareData, rxHexLow, offset);
                     firmwareData = replaceSection(firmwareData, rxHexHi, offset + (4 * 7) + (4 * 6));
+
+                    const buffer = new ArrayBuffer(4);
+                    const dataView = new DataView(buffer);
+                    dataView.setUint32(0, 10799990, true);
+                    const rxHex = new Uint8Array(buffer);
+                    firmwareData = replaceSection(firmwareData, rxHex, offset + (4 * 7));
 			    
                     log(`Успешно применён: ${this.name}.`);
                 }
