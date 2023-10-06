@@ -51,7 +51,7 @@ modClasses = [
 
                 log(`Успешно применён: ${this.name}. Добавлен S-метр. Использовано ${dataSbar.length/2} байт(а) дополнительно.`);
             }
-            if (this.selectSbarOld.checked) {
+            else if (this.selectSbarOld.checked) {
                 firmwareData = replaceSection(firmwareData, hexString("35E8000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E0000005DEC"), 0x0004); //v44
                 firmwareData = replaceSection(firmwareData, dataSbarOld, firmwareData.length);
 
