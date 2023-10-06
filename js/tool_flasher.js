@@ -7,6 +7,19 @@ const flashButton = document.getElementById('flashButton');
 let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
 let rawFirmware = null; // stores the raw firmware data for qsflash.js
 
+function GetLatestReleaseInfo(owner, repo, ending = ".bin") {
+    $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest").done(function(release) {
+        let asset = release.assets.find(asset => asset.name.endsWith(ending));
+        let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
+		    "\nFile size: " + (asset.size / 1024 / 1024).toFixed(2) + " MB" +
+            "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
+            "\nVersion: " + release.tag_name.substring(1) +
+			"\nName: " + release.name;
+        document.getElementById('console').value = "";
+		log(releaseInfo);
+		loadFirmwareFromUrl(asset.browser_download_url);
+    });
+}
 
 function loadFW(encoded_firmware)
 {
@@ -35,7 +48,6 @@ function loadFW(encoded_firmware)
 
 function loadFirmwareFromUrl(theUrl)
 {
-    document.getElementById('console').value = "";
     log("Loading file from url: "+ theUrl+'\n')
     fetch('https://api.codetabs.com/v1/proxy?quest=' + theUrl, {
         // headers: {

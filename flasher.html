@@ -146,6 +146,21 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex">
+                  <div class="mr-auto">
+                    <h6 class="m-0 font-weight-bold text-primary">Прошивки</h6>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p>Эта страничка позволит вам прошить одну из популярных OEFW прошивок (с открытым исходным кодом). Выберите
+                     прошивку, нажмите кнопку с её названием и последний релиз будет загружен автоматически. Либо вы можете
+					 указать собственный файл для прошивки.</p>
+				  <button type="button" class="btn btn-primary" onclick="GetLatestReleaseInfo('DualTachyon', 'uv-k5-firmware', 'packed.bin')">DualTachyon</button>
+				  <button type="button" class="btn btn-primary" onclick="GetLatestReleaseInfo('rebezhir', 'openquack', 'packed.bin')">rebezhir</button>
+				  <button type="button" class="btn btn-primary" onclick="GetLatestReleaseInfo('egzumer', 'uv-k5-firmware-custom', 'packed.bin')">egzumer</button>
+                </div>
+
+              </div>
               <!-- Console -->
               <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
                 <div class="card-header py-3 d-flex">
