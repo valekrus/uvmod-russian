@@ -21,6 +21,21 @@ function GetLatestReleaseInfo(owner, repo, ending = ".bin") {
     });
 }
 
+function GetLatestPreReleaseInfo(owner, repo, ending = ".bin") {
+    $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases").done(function(releases) {
+		let release = releases[0];
+        let asset = release.assets.find(asset => asset.name.endsWith(ending));
+        let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
+		    "\nFile size: " + (asset.size / 1024 / 1024).toFixed(2) + " MB" +
+            "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
+            "\nVersion: " + release.tag_name.substring(1) +
+			"\nName: " + release.name;
+        document.getElementById('console').value = "";
+		log(releaseInfo);
+		loadFirmwareFromUrl(asset.browser_download_url);
+    });
+}
+
 function loadFW(encoded_firmware)
 {
     const flashButton = document.getElementById('flashButton');
