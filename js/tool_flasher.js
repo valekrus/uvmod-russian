@@ -7,7 +7,7 @@ const flashButton = document.getElementById('flashButton');
 let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
 let rawFirmware = null; // stores the raw firmware data for qsflash.js
 
-function GetLatestReleaseInfo(owner, repo, ending = ".bin") {
+function GetLatestReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest").done(function(release) {
         let asset = release.assets.find(asset => asset.name.endsWith(ending));
         let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
@@ -17,11 +17,11 @@ function GetLatestReleaseInfo(owner, repo, ending = ".bin") {
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
-		loadFirmwareFromUrl(asset.browser_download_url);
+		loadFirmwareFromUrl(asset.browser_download_url, encoded);
     });
 }
 
-function GetLatestPreReleaseInfo(owner, repo, ending = ".bin") {
+function GetLatestPreReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases").done(function(releases) {
 		let release = releases[0];
         let asset = release.assets.find(asset => asset.name.endsWith(ending));
@@ -32,17 +32,21 @@ function GetLatestPreReleaseInfo(owner, repo, ending = ".bin") {
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
-		loadFirmwareFromUrl(asset.browser_download_url);
+		loadFirmwareFromUrl(asset.browser_download_url, encoded);
     });
 }
 
-function loadFW(encoded_firmware)
+function loadFW(encoded_firmware, encoded = true)
 {
     const flashButton = document.getElementById('flashButton');
     
     flashButton.classList.add('disabled');
 
-    const unpacked_firmware = unpack(encoded_firmware);
+    if (encoded) {
+        unpacked_firmware = unpack(encoded_firmware);
+	} else {
+		unpacked_firmware = encoded_firmware;
+	}
 
     log(`Detected firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
 
@@ -61,7 +65,7 @@ function loadFW(encoded_firmware)
     flashButton.classList.remove('disabled');
 }
 
-function loadFirmwareFromUrl(theUrl)
+function loadFirmwareFromUrl(theUrl, encoded = true)
 {
     log("Loading file from url: "+ theUrl+'\n')
     fetch('https://api.codetabs.com/v1/proxy?quest=' + theUrl, {
@@ -78,7 +82,7 @@ function loadFirmwareFromUrl(theUrl)
             throw new Error(`Http error: ${res.status}`);
         }
     }).then(encoded_firmware => {
-        loadFW(new Uint8Array(encoded_firmware));
+        loadFW(new Uint8Array(encoded_firmware), encoded);
         customFileLabel.textContent = theUrl.substring(theUrl.lastIndexOf('/')+1);
     }).catch((error) => {
         console.error(error);
