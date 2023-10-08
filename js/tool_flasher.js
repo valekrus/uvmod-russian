@@ -8,9 +8,9 @@ const packedFWCheckbox = document.getElementById('packedFWCheckbox');
 let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
 let rawFirmware = null; // stores the raw firmware data for qsflash.js
 
-function GetLatestReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
+function GetLatestReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest").done(function(release) {
-        let asset = release.assets.find(asset => asset.name.endsWith(ending));
+        let asset = release.assets.find(asset => asset.name.match(regex));
         let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
 		    "\nFile size: " + (asset.size / 1024 / 1024).toFixed(2) + " MB" +
             "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
@@ -23,10 +23,10 @@ function GetLatestReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
     });
 }
 
-function GetLatestPreReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
+function GetLatestPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases").done(function(releases) {
 		let release = releases[0];
-        let asset = release.assets.find(asset => asset.name.endsWith(ending));
+        let asset = release.assets.find(asset => asset.name.match(regex));
         let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
 		    "\nFile size: " + (asset.size / 1024 / 1024).toFixed(2) + " MB" +
             "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
