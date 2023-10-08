@@ -3,6 +3,7 @@ const customFileInputDiv = document.getElementById('customFileInputDiv');
 const customFileInput = document.getElementById('customFileInput');
 const customFileLabel = document.getElementById('customFileLabel');
 const flashButton = document.getElementById('flashButton');
+const packedFWCheckbox = document.getElementById('packedFWCheckbox');
 
 let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
 let rawFirmware = null; // stores the raw firmware data for qsflash.js
@@ -17,6 +18,7 @@ function GetLatestReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
+		packedFWCheckbox.checked = encoded;
 		loadFirmwareFromUrl(asset.browser_download_url, encoded);
     });
 }
@@ -32,6 +34,7 @@ function GetLatestPreReleaseInfo(owner, repo, ending = ".bin", encoded = true) {
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
+		packedFWCheckbox.checked = encoded;
 		loadFirmwareFromUrl(asset.browser_download_url, encoded);
     });
 }
@@ -42,15 +45,17 @@ function loadFW(encoded_firmware, encoded = true)
     
     flashButton.classList.add('disabled');
 
-    if (encoded) {
-        unpacked_firmware = unpack(encoded_firmware);
+    if (packedFWCheckbox.checked) {
+        rawFirmware = unpack(encoded_firmware);
 	} else {
-		unpacked_firmware = encoded_firmware;
+		rawFirmware = encoded_firmware;
+		version = new Uint8Array(16);
+		encoder = new TextEncoder();
+		encoder.encodeInto("*UNKFW-"+(new Date()).toISOString().slice(0,10).replace(/-/g,""), version);
+		rawVersion = version;
 	}
 
     log(`Detected firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
-
-    rawFirmware = unpacked_firmware;
 
     // Check size
     const current_size = rawFirmware.length;
@@ -65,7 +70,7 @@ function loadFW(encoded_firmware, encoded = true)
     flashButton.classList.remove('disabled');
 }
 
-function loadFirmwareFromUrl(theUrl, encoded = true)
+function loadFirmwareFromUrl(theUrl)
 {
     log("Loading file from url: "+ theUrl+'\n')
     fetch('https://api.codetabs.com/v1/proxy?quest=' + theUrl, {
@@ -82,7 +87,7 @@ function loadFirmwareFromUrl(theUrl, encoded = true)
             throw new Error(`Http error: ${res.status}`);
         }
     }).then(encoded_firmware => {
-        loadFW(new Uint8Array(encoded_firmware), encoded);
+        loadFW(new Uint8Array(encoded_firmware));
         customFileLabel.textContent = theUrl.substring(theUrl.lastIndexOf('/')+1);
     }).catch((error) => {
         console.error(error);
