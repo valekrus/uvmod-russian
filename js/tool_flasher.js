@@ -124,21 +124,21 @@ function GetOfficialFW(ver) {
                 "\nRelease date: 09.05.2023"
                 "\nVersion: 2.01.26"
 	    		"\nName: Official firmware (no modifications)";
-			fw_url = "/fw/k5_v2.01.26_publish.bin";
+			fw_url = "fw/k5_v2.01.26_publish.bin";
 			break;
 		case "27":
             releaseInfo = "File size: 58738 Bytes" +
                 "\nRelease date: 08.07.2023"
                 "\nVersion: 2.01.27"
 	    		"\nName: Official firmware (no modifications)";
-			fw_url = "/fw/k5_v2.01.27_flashable.bin";
+			fw_url = "fw/k5_v2.01.27_flashable.bin";
 			break;
 		case "31":
             releaseInfo = "File size: 58838 Bytes" +
                 "\nRelease date: 02.09.2023"
                 "\nVersion: 2.01.31"
 	    		"\nName: Official firmware (no modifications)";
-			fw_url = "/fw/k5_v2.01.31_publish.bin";
+			fw_url = "fw/k5_v2.01.31_publish.bin";
 			break;
 	}
 
