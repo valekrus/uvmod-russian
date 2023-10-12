@@ -1,12 +1,90 @@
-
+const useFirmwareVerCheckbox = document.getElementById('useFirmwareVer');
+const useFirmwareVerLabel = document.getElementById('useFirmwareVerLabel');
+const useFirmwareVerDiv = document.getElementById('useFirmwareVerDiv');
+const firmwareVersionSelect = document.getElementById('firmwareVersionSelect');
 const customFileInputDiv = document.getElementById('customFileInputDiv');
 const customFileInput = document.getElementById('customFileInput');
 const customFileLabel = document.getElementById('customFileLabel');
 const flashButton = document.getElementById('flashButton');
-const packedFWCheckbox = document.getElementById('packedFWCheckbox');
+const useFirmwarePackedCheckbox = document.getElementById('useFirmwarePacked');
+const useFirmwarePackedLabel = document.getElementById('useFirmwarePackedLabel');
+const useFirmwarePackedDiv = document.getElementById('useFirmwarePackedDiv');
+const firmwareVersionText = document.getElementById('firmwareVersionText');
 
 let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
 let rawFirmware = null; // stores the raw firmware data for qsflash.js
+let tmpFirmware = null; // stores the loaded firmware data
+firmwareVersionText.value = "*UNKFW-"+(new Date()).toISOString().slice(0,10).replace(/-/g,"");
+
+function toggleFWCheckbox() {
+    useFirmwareVerCheckbox.checked = !useFirmwareVerCheckbox.checked;
+
+    if (useFirmwareVerCheckbox.checked) {
+        firmwareVersionSelect.classList.add('d-none');
+        useFirmwareVerLabel.classList.remove('d-none');
+    } else {
+        firmwareVersionSelect.classList.remove('d-none');
+        useFirmwareVerLabel.classList.add('d-none');
+    }
+
+    if (tmpFirmware) {
+		loadFW(tmpFirmware);
+	}
+}
+
+function togglePackedCheckbox() {
+    useFirmwarePackedCheckbox.checked = !useFirmwarePackedCheckbox.checked;
+
+    if (useFirmwarePackedCheckbox.checked) {
+        firmwareVersionText.classList.add('d-none');
+        useFirmwarePackedLabel.classList.remove('d-none');
+    } else {
+        firmwareVersionText.classList.remove('d-none');
+        useFirmwarePackedLabel.classList.add('d-none');
+    }
+
+    if (tmpFirmware) {
+		loadFW(tmpFirmware);
+	}
+}
+
+useFirmwareVerDiv.addEventListener('click', function (event) {
+    if (
+        event.target === useFirmwareVerCheckbox ||
+        event.target === useFirmwareVerDiv.querySelector('.input-group-text')
+    ) {
+        toggleFWCheckbox();
+    }
+});
+
+useFirmwareVerCheckbox.addEventListener('change', function () {
+    toggleFWCheckbox();
+});
+
+firmwareVersionSelect.addEventListener('change', function () {
+    if (tmpFirmware) {
+		loadFW(tmpFirmware);
+	}
+});
+
+useFirmwarePackedDiv.addEventListener('click', function (event) {
+    if (
+        event.target === useFirmwarePackedCheckbox ||
+        event.target === useFirmwarePackedDiv.querySelector('.input-group-text')
+    ) {
+        togglePackedCheckbox();
+    }
+});
+
+useFirmwarePackedCheckbox.addEventListener('change', function () {
+    togglePackedCheckbox();
+});
+
+firmwareVersionText.addEventListener('change', function () {
+    if (tmpFirmware) {
+		loadFW(tmpFirmware);
+	}
+});
 
 function GetLatestReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest").done(function(release) {
@@ -18,8 +96,8 @@ function GetLatestReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
-		packedFWCheckbox.checked = encoded;
-		loadFirmwareFromUrl(asset.browser_download_url, encoded);
+		useFirmwarePackedCheckbox.checked = encoded;
+		loadFirmwareFromUrl(asset.browser_download_url);
     });
 }
 
@@ -34,28 +112,69 @@ function GetLatestPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true)
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
-		packedFWCheckbox.checked = encoded;
-		loadFirmwareFromUrl(asset.browser_download_url, encoded);
+		useFirmwarePackedCheckbox.checked = encoded;
+		loadFirmwareFromUrl(asset.browser_download_url);
     });
 }
 
-function loadFW(encoded_firmware, encoded = true)
+function GetOfficialFW(ver) {
+	switch (ver) {
+		case "26":
+            releaseInfo = "File size: 58674 Bytes" +
+                "\nRelease date: 09.05.2023"
+                "\nVersion: 2.01.26"
+	    		"\nName: Official firmware (no modifications)";
+			fw_url = "/fw/k5_v2.01.26_publish.bin";
+			break;
+		case "27":
+            releaseInfo = "File size: 58738 Bytes" +
+                "\nRelease date: 08.07.2023"
+                "\nVersion: 2.01.27"
+	    		"\nName: Official firmware (no modifications)";
+			fw_url = "/fw/k5_v2.01.27_flashable.bin";
+			break;
+		case "31":
+            releaseInfo = "File size: 58838 Bytes" +
+                "\nRelease date: 02.09.2023"
+                "\nVersion: 2.01.31"
+	    		"\nName: Official firmware (no modifications)";
+			fw_url = "/fw/k5_v2.01.31_publish.bin";
+			break;
+	}
+
+    document.getElementById('console').value = "";
+	log(releaseInfo);
+	useFirmwarePackedCheckbox.checked = true;
+	loadFirmwareFromUrl(fw_url, true);
+}
+
+function loadFW(loaded_firmware)
 {
+    tmpFirmware = loaded_firmware
+
     const flashButton = document.getElementById('flashButton');
     
     flashButton.classList.add('disabled');
 
-    if (packedFWCheckbox.checked) {
-        rawFirmware = unpack(encoded_firmware);
+    if (useFirmwarePackedCheckbox.checked) {
+        rawFirmware = unpack(loaded_firmware);
 	} else {
-		rawFirmware = encoded_firmware;
+		rawFirmware = loaded_firmware;
 		version = new Uint8Array(16);
 		encoder = new TextEncoder();
-		encoder.encodeInto("*UNKFW-"+(new Date()).toISOString().slice(0,10).replace(/-/g,""), version);
+		encoder.encodeInto(firmwareVersionText.value, version);
 		rawVersion = version;
 	}
 
     log(`Detected firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
+
+    if (!useFirmwareVerCheckbox.checked) {
+        // Adjust firmware version to allow cross flashing
+        const newVersionChar = firmwareVersionSelect.value;
+        const newVersionCharCode = newVersionChar.charCodeAt(0);
+        rawVersion[0] = newVersionCharCode;
+        log(`Modified firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
+	}
 
     // Check size
     const current_size = rawFirmware.length;
@@ -70,10 +189,16 @@ function loadFW(encoded_firmware, encoded = true)
     flashButton.classList.remove('disabled');
 }
 
-function loadFirmwareFromUrl(theUrl)
+function loadFirmwareFromUrl(theUrl, direct = false)
 {
     log("Loading file from url: "+ theUrl+'\n')
-    fetch('https://api.codetabs.com/v1/proxy?quest=' + theUrl, {
+//    fetch('https://api.codetabs.com/v1/proxy?quest=' + theUrl, {
+	if (direct) {
+		fetch_url = theUrl;
+	} else {
+		fetch_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(theUrl)}`;
+	}
+    fetch(fetch_url, {
         // headers: {
         //     'Access-Control-Allow-Origin':'*'
         //     'x-cors-api-key': 'temp_2f1bf656ef75047798830d7dbbc09bd6'
@@ -86,8 +211,8 @@ function loadFirmwareFromUrl(theUrl)
             log(`Http error: ${res.status}`);
             throw new Error(`Http error: ${res.status}`);
         }
-    }).then(encoded_firmware => {
-        loadFW(new Uint8Array(encoded_firmware));
+    }).then(loaded_firmware => {
+        loadFW(new Uint8Array(loaded_firmware));
         customFileLabel.textContent = theUrl.substring(theUrl.lastIndexOf('/')+1);
     }).catch((error) => {
         console.error(error);
