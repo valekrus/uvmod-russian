@@ -6,6 +6,7 @@ const customFileInputDiv = document.getElementById('customFileInputDiv');
 const customFileInput = document.getElementById('customFileInput');
 const customFileLabel = document.getElementById('customFileLabel');
 const flashButton = document.getElementById('flashButton');
+const downloadButton = document.getElementById('downloadButton');
 const useFirmwarePackedCheckbox = document.getElementById('useFirmwarePacked');
 const useFirmwarePackedLabel = document.getElementById('useFirmwarePackedLabel');
 const useFirmwarePackedDiv = document.getElementById('useFirmwarePackedDiv');
@@ -96,7 +97,9 @@ function GetLatestReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
-		useFirmwarePackedCheckbox.checked = encoded;
+		if (useFirmwarePackedCheckbox.checked != encoded) {
+            togglePackedCheckbox();
+        }
 		loadFirmwareFromUrl(asset.browser_download_url);
     });
 }
@@ -112,7 +115,9 @@ function GetLatestPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true)
 			"\nName: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
-		useFirmwarePackedCheckbox.checked = encoded;
+		if (useFirmwarePackedCheckbox.checked != encoded) {
+            togglePackedCheckbox();
+        }
 		loadFirmwareFromUrl(asset.browser_download_url);
     });
 }
@@ -125,6 +130,7 @@ function GetOfficialFW(ver) {
                 "\nVersion: 2.01.26"
 	    		"\nName: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.26_publish.bin";
+			firmwareVersionText.value = "2.01.26";
 			break;
 		case "27":
             releaseInfo = "File size: 58738 Bytes" +
@@ -132,6 +138,7 @@ function GetOfficialFW(ver) {
                 "\nVersion: 2.01.27"
 	    		"\nName: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.27_flashable.bin";
+			firmwareVersionText.value = "2.01.27";
 			break;
 		case "31":
             releaseInfo = "File size: 58838 Bytes" +
@@ -139,6 +146,7 @@ function GetOfficialFW(ver) {
                 "\nVersion: 2.01.31"
 	    		"\nName: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.31_publish.bin";
+			firmwareVersionText.value = "2.01.31";
 			break;
 	}
 
@@ -152,12 +160,13 @@ function loadFW(loaded_firmware)
 {
     tmpFirmware = loaded_firmware
 
-    const flashButton = document.getElementById('flashButton');
-    
     flashButton.classList.add('disabled');
+    downloadButton.classList.add('disabled');
 
     if (useFirmwarePackedCheckbox.checked) {
         rawFirmware = unpack(loaded_firmware);
+        decoder = new TextDecoder();
+        firmwareVersionText.value = decoder.decode(rawVersion.subarray(0, rawVersion.indexOf(0)));
 	} else {
 		rawFirmware = loaded_firmware;
 		version = new Uint8Array(16);
@@ -182,11 +191,28 @@ function loadFW(loaded_firmware)
     const percentage = (current_size / max_size) * 100;
     log(`Firmware uses ${percentage.toFixed(2)}% of available memory (${current_size}/${max_size} bytes).`);
     if (current_size > max_size) {
-        log("WARNING: Firmware is too large and WILL NOT WORK!\nTry disabling mods that take up extra memory.");
+        log("WARNING: Firmware is too large and WILL NOT WORK!");
         return;
     }
 
     flashButton.classList.remove('disabled');
+
+    const down_firmware = (useFirmwarePackedCheckbox.checked) ? pack(rawFirmware) : rawFirmware;
+
+    // Save encoded firmware to file
+    const fwDownBlob = new Blob([down_firmware]);
+    const fwDownURL = URL.createObjectURL(fwDownBlob);
+    downloadButton.href = fwDownURL;
+    if (!downloadButton.download) {
+        downloadButton.download = (firmwareVersionText.value[0] == '*') ? 'all_models_' + firmwareVersionText.value.substring(1) + '.bin' : firmwareVersionText.value + '.bin';
+    }
+    fwDownExt = downloadButton.download.substring(downloadButton.download.lastIndexOf('.')+1);
+    downloadButton.download = downloadButton.download.substring(0, downloadButton.download.lastIndexOf('.'));
+    downloadButton.download = downloadButton.download.replace('.packed', '');
+    downloadButton.download = downloadButton.download.replace('.unpacked', '');
+    downloadButton.download += (useFirmwarePackedCheckbox.checked) ? '.packed.' + fwDownExt : '.unpacked.' + fwDownExt;
+    //downloadButton.download = customFileInput.files[0].name;
+    downloadButton.classList.remove('disabled');
 }
 
 function loadFirmwareFromUrl(theUrl, direct = false)
@@ -214,6 +240,7 @@ function loadFirmwareFromUrl(theUrl, direct = false)
     }).then(loaded_firmware => {
         loadFW(new Uint8Array(loaded_firmware));
         customFileLabel.textContent = theUrl.substring(theUrl.lastIndexOf('/')+1);
+        downloadButton.download = theUrl.substring(theUrl.lastIndexOf('/')+1);
     }).catch((error) => {
         console.error(error);
         log('Error while loading firmware, check log above or developer console for details.');
