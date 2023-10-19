@@ -241,11 +241,12 @@
 				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('31')">v2.01.31</button>
                     <div class="dropdown-divider"></div>
 				    <h6 class="dropdown-header">Прошивки OEFW:</h6>
-				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('DualTachyon', 'uv-k5-firmware', /packed\.bin$/gm)">DualTachyon</button>
-				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('rebezhir', 'openquack', /packed\.bin$/gm)">rebezhir</button>
-				    <button type="button" class="dropdown-item" onclick="GetLatestPreReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod', /firmware-fagci-mod-.*\.bin$/gm)">fagci (тестовые версии)</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('DualTachyon', 'uv-k5-firmware', /packed\.bin$/gm)">DualTachyon</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('rebezhir', 'openquack', /packed\.bin$/gm)">rebezhir</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestGitFileInfo('OneOfEleven', 'uv-k5-firmware-custom', 'firmware.packed.bin')">OneOfEleven (1 of 11)</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestGitPreReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod', /firmware-fagci-mod-.*\.bin$/gm)">fagci (тестовые версии)</button>
 				    <!--<button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod')">fagci (релиз)</button>-->
-				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('egzumer', 'uv-k5-firmware-custom', /packed\.bin$/gm)">egzumer</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('egzumer', 'uv-k5-firmware-custom', /packed\.bin$/gm)">egzumer</button>
 				  </div>
                 </div>
 

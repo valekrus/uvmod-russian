@@ -87,11 +87,11 @@ firmwareVersionText.addEventListener('change', function () {
 	}
 });
 
-function GetLatestReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
+function GetLatestGitReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest").done(function(release) {
         let asset = release.assets.find(asset => asset.name.match(regex));
         let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
-		    "\nFile size: " + (asset.size / 1024 / 1024).toFixed(2) + " MB" +
+		    "\nFile size: " + (asset.size / 1024 ).toFixed(2) + " KB" +
             "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
             "\nVersion: " + release.tag_name.substring(1) +
 			"\nName: " + release.name;
@@ -104,12 +104,12 @@ function GetLatestReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     });
 }
 
-function GetLatestPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
+function GetLatestGitPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases").done(function(releases) {
 		let release = releases[0];
         let asset = release.assets.find(asset => asset.name.match(regex));
         let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
-		    "\nFile size: " + (asset.size / 1024 / 1024).toFixed(2) + " MB" +
+		    "\nFile size: " + (asset.size / 1024 ).toFixed(2) + " KB" +
             "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
             "\nVersion: " + release.tag_name.substring(1) +
 			"\nName: " + release.name;
@@ -119,6 +119,23 @@ function GetLatestPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true)
             togglePackedCheckbox();
         }
 		loadFirmwareFromUrl(asset.browser_download_url);
+    });
+}
+
+function GetLatestGitFileInfo(owner, repo, filePath, encoded = true) {
+    $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/contents/" + filePath).done(function(fileInfo) {
+        $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/commits?path=" + filePath).done(function(commits) {
+            let commit = commits[0].commit;
+            let releaseInfo = "File size: " + (fileInfo.size / 1024 ).toFixed(2) + " KB" +
+                "\nRelease date: " + new Date(commit.author.date).toLocaleDateString("ru-RU") +
+                "\nComment: " + commit.message;
+            document.getElementById('console').value = "";
+		    log(releaseInfo);
+		    if (useFirmwarePackedCheckbox.checked != encoded) {
+                togglePackedCheckbox();
+            }
+		    loadFirmwareFromUrl(fileInfo.download_url);
+        });
     });
 }
 
