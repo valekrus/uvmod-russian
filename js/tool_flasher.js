@@ -144,7 +144,7 @@ function GetOfficialFW(ver) {
             releaseInfo = "File size: 58674 bytes" +
                 "\nRelease date: 09.05.2023" +
                 "\nVersion: 2.01.26" +
-	    		"\nRelese name: Official firmware (no modifications)";
+	    		"\nRelease name: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.26_publish.bin";
 			firmwareVersionText.value = "2.01.26";
 			break;
