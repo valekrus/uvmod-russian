@@ -90,11 +90,10 @@ firmwareVersionText.addEventListener('change', function () {
 function GetLatestGitReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases/latest").done(function(release) {
         let asset = release.assets.find(asset => asset.name.match(regex));
-        let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
-		    "\nFile size: " + (asset.size / 1024 ).toFixed(2) + " KB" +
+        let releaseInfo = "File size: " + asset.size + " bytes" +
             "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
             "\nVersion: " + release.tag_name.substring(1) +
-			"\nName: " + release.name;
+			"\nRelease name: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
 		if (useFirmwarePackedCheckbox.checked != encoded) {
@@ -108,11 +107,10 @@ function GetLatestGitPreReleaseInfo(owner, repo, regex = /\.bin/gm, encoded = tr
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/releases").done(function(releases) {
 		let release = releases[0];
         let asset = release.assets.find(asset => asset.name.match(regex));
-        let releaseInfo = "Download count: " + asset.download_count.toLocaleString() +
-		    "\nFile size: " + (asset.size / 1024 ).toFixed(2) + " KB" +
+        let releaseInfo = "File size: " + asset.size + " bytes" +
             "\nRelease date: " + new Date(asset.updated_at).toLocaleDateString("ru-RU") +
             "\nVersion: " + release.tag_name.substring(1) +
-			"\nName: " + release.name;
+			"\nRelease name: " + release.name;
         document.getElementById('console').value = "";
 		log(releaseInfo);
 		if (useFirmwarePackedCheckbox.checked != encoded) {
@@ -126,9 +124,10 @@ function GetLatestGitFileInfo(owner, repo, filePath, encoded = true) {
     $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/contents/" + filePath).done(function(fileInfo) {
         $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/commits?path=" + filePath).done(function(commits) {
             let commit = commits[0].commit;
-            let releaseInfo = "File size: " + (fileInfo.size / 1024 ).toFixed(2) + " KB" +
+            let releaseInfo = "File size: " + fileInfo.size + " bytes" +
                 "\nRelease date: " + new Date(commit.author.date).toLocaleDateString("ru-RU") +
-                "\nComment: " + commit.message;
+                "\nCommit: " + commits[0].sha +
+                "\nMessage: " + commit.message;
             document.getElementById('console').value = "";
 		    log(releaseInfo);
 		    if (useFirmwarePackedCheckbox.checked != encoded) {
@@ -142,26 +141,26 @@ function GetLatestGitFileInfo(owner, repo, filePath, encoded = true) {
 function GetOfficialFW(ver) {
 	switch (ver) {
 		case "26":
-            releaseInfo = "File size: 58674 Bytes" +
-                "\nRelease date: 09.05.2023"
-                "\nVersion: 2.01.26"
-	    		"\nName: Official firmware (no modifications)";
+            releaseInfo = "File size: 58674 bytes" +
+                "\nRelease date: 09.05.2023" +
+                "\nVersion: 2.01.26" +
+	    		"\nRelese name: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.26_publish.bin";
 			firmwareVersionText.value = "2.01.26";
 			break;
 		case "27":
-            releaseInfo = "File size: 58738 Bytes" +
-                "\nRelease date: 08.07.2023"
-                "\nVersion: 2.01.27"
-	    		"\nName: Official firmware (no modifications)";
+            releaseInfo = "File size: 58738 bytes" +
+                "\nRelease date: 08.07.2023" +
+                "\nVersion: 2.01.27" +
+	    		"\nRelease name: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.27_flashable.bin";
 			firmwareVersionText.value = "2.01.27";
 			break;
 		case "31":
-            releaseInfo = "File size: 58838 Bytes" +
-                "\nRelease date: 02.09.2023"
-                "\nVersion: 2.01.31"
-	    		"\nName: Official firmware (no modifications)";
+            releaseInfo = "File size: 58838 bytes" +
+                "\nRelease date: 02.09.2023" +
+                "\nVersion: 2.01.31" +
+	    		"\nRelease name: Official firmware (no modifications)";
 			fw_url = "fw/k5_v2.01.31_publish.bin";
 			firmwareVersionText.value = "2.01.31";
 			break;
