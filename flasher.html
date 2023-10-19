@@ -144,40 +144,9 @@
         <div class="container mt-4" style="max-width: 1440px;">
 
           <div class="row">
-            <div class="col mb-4">
-              <!-- FW -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex">
-                  <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Прошивки</h6>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <p>Эта страничка позволит вам прошить чистую официальную или одну из популярных OEFW прошивок (с открытым исходным кодом). Выберите
-                     прошивку и последний релиз будет загружен автоматически. Либо вы можете указать собственный файл для прошивки.</p>
-				  <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                    Выбрать прошивку
-                  </button>
-				  <div class="dropdown-menu" role="group" aria-label="Официальные прошивки">
-				    <h6 class="dropdown-header">Официальные прошивки:</h6>
-				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('26')">v2.01.26</button>
-				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('27')">v2.01.27</button>
-				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('31')">v2.01.31</button>
-                    <div class="dropdown-divider"></div>
-				    <h6 class="dropdown-header">Прошивки OEFW:</h6>
-				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('DualTachyon', 'uv-k5-firmware', /packed\.bin$/gm)">DualTachyon</button>
-				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('rebezhir', 'openquack', /packed\.bin$/gm)">rebezhir</button>
-				    <button type="button" class="dropdown-item" onclick="GetLatestPreReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod', /firmware-fagci-mod-.*\.bin$/gm)">fagci (тестовые версии)</button>
-				    <!--<button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod')">fagci (релиз)</button>-->
-				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('egzumer', 'uv-k5-firmware-custom', /packed\.bin$/gm)">egzumer</button>
-				  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="col-lg-8">
+            <div class="col-lg-8 mb-4">
               <!-- Console -->
-              <div class="card shadow mb-4" style="top: 1.5rem">
+              <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
                 <div class="card-header py-3 d-flex">
                   <div class="mr-auto">
                     <h6 class="m-0 font-weight-bold text-primary">Консоль</h6>
@@ -198,7 +167,7 @@
                       </div>
 					  <input id="firmwareVersionText" type="text" maxlength="15" class="form-control d-none" placeholder="Версия прошивки (макс. 15 символов)">
                       <label for="useFirmwarePacked" id="useFirmwarePackedLabel" class="form-control" readonly style="cursor: pointer;">Упакованная
-                        (как оригинальная) прошивка</label>
+                         прошивка</label>
                       <div class="input-group-append" style="cursor: pointer;">
                         <label class="input-group-text" for="useFirmwarePacked" style="cursor: pointer;"></label>
                       </div>
@@ -217,7 +186,7 @@
                         <option value="3">Для UV-K6</option>
                         <option value="4">Для UV-5R Plus</option>
                       </select>
-                      <label for="useFirmwareVer" id="useFirmwareVerLabel" class="form-control" readonly style="cursor: pointer;">Не корректировать версию</label>
+                      <label for="useFirmwareVer" id="useFirmwareVerLabel" class="form-control" readonly style="cursor: pointer;">Оригинальная версия</label>
                       <div class="input-group-append" style="cursor: pointer;">
                         <label class="input-group-text" for="useFirmwareVer" style="cursor: pointer;"></label>
                       </div>
@@ -250,6 +219,37 @@
 
               </div>
 
+            </div>
+            <div class="col mb-4">
+              <!-- FW -->
+              <div class="card shadow-lg mb-4">
+                <div class="card-header py-3 d-flex">
+                  <div class="mr-auto">
+                    <h6 class="m-0 font-weight-bold text-primary">Прошивки</h6>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p>Эта страничка позволит вам прошить чистую официальную или одну из популярных OEFW прошивок (с открытым исходным кодом). Выберите
+                     прошивку и последний релиз будет загружен автоматически. Либо вы можете указать собственный файл для прошивки.</p>
+				  <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                    Выбрать прошивку
+                  </button>
+				  <div class="dropdown-menu" role="group" aria-label="Официальные прошивки">
+				    <h6 class="dropdown-header">Официальные прошивки:</h6>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('26')">v2.01.26</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('27')">v2.01.27</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('31')">v2.01.31</button>
+                    <div class="dropdown-divider"></div>
+				    <h6 class="dropdown-header">Прошивки OEFW:</h6>
+				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('DualTachyon', 'uv-k5-firmware', /packed\.bin$/gm)">DualTachyon</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('rebezhir', 'openquack', /packed\.bin$/gm)">rebezhir</button>
+				    <button type="button" class="dropdown-item" onclick="GetLatestPreReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod', /firmware-fagci-mod-.*\.bin$/gm)">fagci (тестовые версии)</button>
+				    <!--<button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod')">fagci (релиз)</button>-->
+				    <button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('egzumer', 'uv-k5-firmware-custom', /packed\.bin$/gm)">egzumer</button>
+				  </div>
+                </div>
+
+              </div>
             </div>
 
           </div>
