@@ -196,8 +196,7 @@
                     <div class="input-group mt-4">
                       <div id="customFileInputDiv" class="custom-file">
                         <input id="customFileInput" type="file" class="custom-file-input">
-                        <label id="customFileLabel" class="custom-file-label" for="customFileInput">Выбрать файл
-                          </label>
+                        <label id="customFileLabel" class="custom-file-label" for="customFileInput">Выбрать файл</label>
                       </div>
                     </div>
                   </div>
@@ -258,6 +257,7 @@
 				    <!--<button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod')">fagci (релиз)</button>-->
 				    <button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('egzumer', 'uv-k5-firmware-custom', /packed\.bin$/gm)">egzumer</button>
 					<button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('kamilsss655', 'uv-k5-firmware-custom', /packed\.bin$/gm)">kamilisss655</button>
+                    <button type="button" class="dropdown-item" onclick="GetZippedFWFromUrl('https://www.domox.org/?file=firmware_IJV.zip')">IJV</button>
 				  </div>
                 </div>
 
@@ -300,12 +300,16 @@
   </div>
   <!-- End of Page Wrapper -->
 
-  <!-- Bootstrap core JavaScript-->
+    <!-- Bootstrap core JavaScript-->
   <script src="js/vendor/jquery.min.js"></script>
   <script src="js/vendor/bootstrap.bundle.min.js"></script>
   <script src="js/vendor/bs-custom-file-input.min.js"></script>
 
   <!-- Core plugin JavaScript-->
+
+  <!-- JavaScript ZIP Lib-->
+
+  <script src="js/vendor/zip.min.js"></script>
 
   <!-- Patcher JavaScript -->
   <script src="js/fwpack.js"></script>

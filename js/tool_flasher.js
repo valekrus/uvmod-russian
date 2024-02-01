@@ -241,8 +241,47 @@ function GetOfficialFW(ver) {
 	loadFirmwareFromUrl(fw_url, true);
 }
 
-function loadFW(loaded_firmware)
-{
+function GetZippedFWFromUrl(theUrl, regex = /\.bin/gm, encoded = true, direct = false) {
+    log("Loading file from url: "+theUrl+"\n");
+	if (direct) {
+		fetch_url = theUrl;
+	} else {
+		fetch_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(theUrl)}`;
+	}
+    fetch(fetch_url)
+    .then(res => {
+        if (res.ok) {
+            return res.blob();
+        } else {
+            log(`Http error: ${res.status}`);
+            throw new Error(`Http error: ${res.status}`);
+        }
+    })
+    .then(loaded_file => {
+        log("Searching ZIP file for firmware...");
+        return (new zip.ZipReader(new zip.BlobReader(loaded_file))).getEntries();
+    })
+    .then(entries => {
+        let entry = entries.find(entry => entry.filename.match(regex));
+        log("Found firmware file: "+entry.filename);
+        customFileLabel.textContent = entry.filename;
+        downloadButton.download = entry.filename;
+        log("Unzipping firmware file...\n");
+        return entry.getData(new zip.BlobWriter());
+    })
+    .then(fileBlob => {
+        return fileBlob.arrayBuffer();
+    })
+    .then(unzippedFW => {
+        loadFW(new Uint8Array(unzippedFW));
+    })
+    .catch((error) => {
+        console.error(error);
+        log("Error while loading zip file, check log above or developer console for details.");
+    });
+}
+
+function loadFW(loaded_firmware) {
     tmpFirmware = loaded_firmware
 
     flashButton.classList.add('disabled');
@@ -300,21 +339,14 @@ function loadFW(loaded_firmware)
     downloadButton.classList.remove('disabled');
 }
 
-function loadFirmwareFromUrl(theUrl, direct = false)
-{
-    log("Loading file from url: "+ theUrl+'\n')
-//    fetch('https://api.codetabs.com/v1/proxy?quest=' + theUrl, {
+function loadFirmwareFromUrl(theUrl, direct = false) {
+    log("Loading file from url: "+theUrl+"\n");
 	if (direct) {
 		fetch_url = theUrl;
 	} else {
 		fetch_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(theUrl)}`;
 	}
-    fetch(fetch_url, {
-        // headers: {
-        //     'Access-Control-Allow-Origin':'*'
-        //     'x-cors-api-key': 'temp_2f1bf656ef75047798830d7dbbc09bd6'
-        // }
-      })
+    fetch(fetch_url)
     .then(res => {
         if (res.ok) {
             return res.arrayBuffer();
@@ -322,27 +354,40 @@ function loadFirmwareFromUrl(theUrl, direct = false)
             log(`Http error: ${res.status}`);
             throw new Error(`Http error: ${res.status}`);
         }
-    }).then(loaded_firmware => {
+    })
+    .then(loaded_firmware => {
         loadFW(new Uint8Array(loaded_firmware));
         customFileLabel.textContent = theUrl.substring(theUrl.lastIndexOf('/')+1);
         downloadButton.download = theUrl.substring(theUrl.lastIndexOf('/')+1);
-    }).catch((error) => {
+    })
+    .catch((error) => {
         console.error(error);
-        log('Error while loading firmware, check log above or developer console for details.');
+        log("Error while loading firmware, check log above or developer console for details.");
     });
 }
 
 function downloadFile(url, fileName) {
-  fetch(url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
-    .then(res => res.blob())
+    fetch(url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
     .then(res => {
-      const aElement = document.createElement('a');
-      aElement.setAttribute('download', fileName);
-      const href = URL.createObjectURL(res);
-      aElement.href = href;
-      aElement.setAttribute('target', '_blank');
-      aElement.click();
-      URL.revokeObjectURL(href);
+        if (res.ok) {
+            return res.blob();
+        } else {
+            log(`Http error: ${res.status}`);
+            throw new Error(`Http error: ${res.status}`);
+        }
+    })
+    .then(res => {
+        const aElement = document.createElement('a');
+        aElement.setAttribute('download', fileName);
+        const href = URL.createObjectURL(res);
+        aElement.href = href;
+        aElement.setAttribute('target', '_blank');
+        aElement.click();
+        URL.revokeObjectURL(href);
+    })
+    .catch((error) => {
+        console.error(error);
+        log("Error while downloading file, check log above or developer console for details.");
     });
 };
 
@@ -368,7 +413,7 @@ customFileInput.addEventListener('change', function () {
             })
             .catch((error) => {
                 console.error(error);
-                log('Error while loading firmware, check log above or developer console for details.');
+                log("Error while loading firmware, check log above or developer console for details.");
             });
     } else {
         // If no file is selected, reset the label text
