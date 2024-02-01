@@ -138,31 +138,100 @@ function GetLatestGitFileInfo(owner, repo, filePath, encoded = true) {
     });
 }
 
+function GetLatestGitFile(owner, repo, filePath) {
+    $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/contents/" + filePath).done(function(fileInfo) {
+        $.getJSON("https://api.github.com/repos/" + owner + "/" + repo + "/commits?path=" + filePath).done(function(commits) {
+            let commit = commits[0].commit;
+            let releaseInfo = "File size: " + fileInfo.size + " bytes" +
+                "\nFile name: " + fileInfo.name +
+                "\nRelease date: " + new Date(commit.author.date).toLocaleDateString("ru-RU") +
+                "\nCommit: " + commits[0].sha +
+                "\nMessage: " + commit.message;
+            document.getElementById('console').value = "";
+		    log(releaseInfo);
+
+		    downloadFile(fileInfo.download_url, fileInfo.name);
+        });
+    });
+}
+
 function GetOfficialFW(ver) {
 	switch (ver) {
-		case "26":
+		case "2.01.26":
             releaseInfo = "File size: 58674 bytes" +
                 "\nRelease date: 09.05.2023" +
                 "\nVersion: 2.01.26" +
-	    		"\nRelease name: Official firmware (no modifications)";
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Released on Quansheng site (UV-K5)";
 			fw_url = "fw/k5_v2.01.26_publish.bin";
 			firmwareVersionText.value = "2.01.26";
 			break;
-		case "27":
+		case "2.01.27":
             releaseInfo = "File size: 58738 bytes" +
                 "\nRelease date: 08.07.2023" +
                 "\nVersion: 2.01.27" +
-	    		"\nRelease name: Official firmware (no modifications)";
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Not released, dumped from device (UV-K5)";
 			fw_url = "fw/k5_v2.01.27_flashable.bin";
 			firmwareVersionText.value = "2.01.27";
 			break;
-		case "31":
+		case "2.01.31":
             releaseInfo = "File size: 58838 bytes" +
                 "\nRelease date: 02.09.2023" +
                 "\nVersion: 2.01.31" +
-	    		"\nRelease name: Official firmware (no modifications)";
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Released on Quansheng site (UV-K5)";
 			fw_url = "fw/k5_v2.01.31_publish.bin";
 			firmwareVersionText.value = "2.01.31";
+			break;
+		case "2.01.32":
+            releaseInfo = "File size: 58862 bytes" +
+                "\nVersion: 2.01.32" +
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Released on Radtel site (RT590)";
+			fw_url = "fw/RT590_v2.01.32_publish.bin";
+			firmwareVersionText.value = "2.01.32";
+			break;
+		case "3.00.10":
+            releaseInfo = "File size: 61150 bytes" +
+                "\nVersion: 3.00.10" +
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Not released, dumped from device (UV-K6)";
+			fw_url = "fw/k6_v3.00.10_flashable.bin";
+			firmwareVersionText.value = "3.00.10";
+			break;
+		case "3.00.15":
+            releaseInfo = "File size: 61274 bytes" +
+                "\nRelease date: 02.09.2023" +
+                "\nVersion: 3.00.15" +
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Released on Quansheng site (UV-K6)";
+			fw_url = "fw/k6_v3.00.15_publish.bin";
+			firmwareVersionText.value = "3.00.15";
+			break;
+		case "4.00.01":
+            releaseInfo = "File size: 58610 bytes" +
+                "\nVersion: 4.00.01" +
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Not released, dumped from device (UV-5R PLUS)";
+			fw_url = "fw/k5_v4.00.01_flashable.bin";
+			firmwareVersionText.value = "4.00.01";
+			break;
+		case "4.00.06":
+            releaseInfo = "File size: 58702 bytes" +
+                "\nVersion: 4.00.06" +
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Released on Radtel site (RT600)";
+			fw_url = "fw/RT600_v4.00.06_publish.bin";
+			firmwareVersionText.value = "4.00.06";
+			break;
+		case "4.00.07":
+            releaseInfo = "File size: 58726 bytes" +
+                "\nVersion: 4.00.07" +
+	    		"\nRelease type: Official firmware (no modifications)" +
+                "\nDecription: Not released, received from the Quansheng helpdesk (UV-5R PLUS)";
+			fw_url = "fw/k5_v4.00.07_publish.bin";
+			firmwareVersionText.value = "4.00.07";
 			break;
 	}
 
@@ -263,6 +332,19 @@ function loadFirmwareFromUrl(theUrl, direct = false)
     });
 }
 
+function downloadFile(url, fileName) {
+  fetch(url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
+    .then(res => res.blob())
+    .then(res => {
+      const aElement = document.createElement('a');
+      aElement.setAttribute('download', fileName);
+      const href = URL.createObjectURL(res);
+      aElement.href = href;
+      aElement.setAttribute('target', '_blank');
+      aElement.click();
+      URL.revokeObjectURL(href);
+    });
+};
 
 // Update text to show filename after file selection
 customFileInput.addEventListener('change', function () {

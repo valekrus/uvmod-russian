@@ -231,14 +231,24 @@
                 <div class="card-body">
                   <p>Эта страничка позволит вам прошить чистую официальную или одну из популярных OEFW прошивок (с открытым исходным кодом). Выберите
                      прошивку и последний релиз будет загружен автоматически. Либо вы можете указать собственный файл для прошивки.</p>
+                  <p>При прошивке официальных
+                     версий обращайте внимание на первую цифру версии в "Detected firmware version". По ней загрузчик в рации проверяет соответствие версии
+                     ПО и модели. Если необходимо прошить на другую модель - сделать это можно, если снять галочку "Оригинальная версия" и выбрать
+                     "Для всех раций" (рекомендуется) или свою модель в выпадающем списке.</p>
 				  <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                     Выбрать прошивку
                   </button>
 				  <div class="dropdown-menu" role="group" aria-label="Официальные прошивки">
 				    <h6 class="dropdown-header">Официальные прошивки:</h6>
-				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('26')">v2.01.26</button>
-				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('27')">v2.01.27</button>
-				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('31')">v2.01.31</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('2.01.26')">v2.01.26</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('2.01.27')">v2.01.27</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('2.01.31')">v2.01.31</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('2.01.32')">v2.01.32</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('3.00.10')">v3.00.10</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('3.00.15')">v3.00.15</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('4.00.01')">v4.00.01</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('4.00.06')">v4.00.06</button>
+				    <button type="button" class="dropdown-item" onclick="GetOfficialFW('4.00.07')">v4.00.07</button>
                     <div class="dropdown-divider"></div>
 				    <h6 class="dropdown-header">Прошивки OEFW:</h6>
 				    <button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('DualTachyon', 'uv-k5-firmware', /packed\.bin$/gm)">DualTachyon</button>
@@ -247,7 +257,29 @@
 				    <button type="button" class="dropdown-item" onclick="GetLatestGitPreReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod', /firmware-fagci-mod-.*\.bin$/gm)">fagci (тестовые версии)</button>
 				    <!--<button type="button" class="dropdown-item" onclick="GetLatestReleaseInfo('fagci', 'uv-k5-firmware-fagci-mod')">fagci (релиз)</button>-->
 				    <button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('egzumer', 'uv-k5-firmware-custom', /packed\.bin$/gm)">egzumer</button>
-					<button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('kamilsss655', 'uv-k5-firmware-custom', /packed\.bin$/gm)">Kamiliss</button>
+					<button type="button" class="dropdown-item" onclick="GetLatestGitReleaseInfo('kamilsss655', 'uv-k5-firmware-custom', /packed\.bin$/gm)">kamilisss655</button>
+				  </div>
+                </div>
+
+              </div>
+              <!-- SW -->
+              <div class="card shadow-lg mb-4">
+                <div class="card-header py-3 d-flex">
+                  <div class="mr-auto">
+                    <h6 class="m-0 font-weight-bold text-primary">Программы</h6>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p>Программы для прошивки и конфигурации раций.</p>
+				  <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                    Выбрать программу
+                  </button>
+				  <div class="dropdown-menu" role="group" aria-label="Официальные прошивки">
+				    <h6 class="dropdown-header">Официальные программы:</h6>
+                    <button type="button" class="dropdown-item" onclick="downloadFile('fw/uvk5updater.zip', 'uvk5updater.zip')">UV-K5 Updater</button>
+                    <div class="dropdown-divider"></div>
+				    <h6 class="dropdown-header">Программы OpenSource:</h6>
+				    <button type="button" class="dropdown-item" onclick="GetLatestGitFile('OneOfEleven', 'k5prog-win', 'k5prog_win.exe')">K5Prog</button>
 				  </div>
                 </div>
 
