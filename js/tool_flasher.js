@@ -248,7 +248,7 @@ function GetZippedFWFromUrl(theUrl, regex = /\.bin/gm, encoded = true, direct = 
 	} else {
 		fetch_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(theUrl)}`;
 	}
-    fetch(fetch_url)
+    fetch(fetch_url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
     .then(res => {
         if (res.ok) {
             return res.blob();
@@ -366,8 +366,14 @@ function loadFirmwareFromUrl(theUrl, direct = false) {
     });
 }
 
-function downloadFile(url, fileName) {
-    fetch(url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
+function downloadFile(theUrl, fileName, direct = false) {
+    log("Downloading file from url: "+theUrl+"\n");
+	if (direct) {
+		fetch_url = theUrl;
+	} else {
+		fetch_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(theUrl)}`;
+	}
+    fetch(fetch_url)
     .then(res => {
         if (res.ok) {
             return res.blob();
