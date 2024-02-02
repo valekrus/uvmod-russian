@@ -248,7 +248,8 @@ function GetZippedFWFromUrl(theUrl, regex = /\.bin/gm, encoded = true, direct = 
 	} else {
 		fetch_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(theUrl)}`;
 	}
-    fetch(fetch_url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
+//    fetch(fetch_url, { method: 'get', mode: 'no-cors', referrerPolicy: 'no-referrer' })
+    fetch(fetch_url)
     .then(res => {
         if (res.ok) {
             return res.blob();
