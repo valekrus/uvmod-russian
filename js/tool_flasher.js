@@ -2,7 +2,6 @@ const useFirmwareVerCheckbox = document.getElementById('useFirmwareVer');
 const useFirmwareVerLabel = document.getElementById('useFirmwareVerLabel');
 const useFirmwareVerDiv = document.getElementById('useFirmwareVerDiv');
 const firmwareVersionSelect = document.getElementById('firmwareVersionSelect');
-const customFileInputDiv = document.getElementById('customFileInputDiv');
 const customFileInput = document.getElementById('customFileInput');
 const customFileLabel = document.getElementById('customFileLabel');
 const flashButton = document.getElementById('flashButton');
@@ -416,7 +415,7 @@ customFileInput.addEventListener('change', function () {
     
         file
             .then((encoded_firmware) => {
-                loadFW(encoded_firmware)
+                loadFW(encoded_firmware);
             })
             .catch((error) => {
                 console.error(error);

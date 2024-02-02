@@ -151,13 +151,12 @@
                 </a>
                 <div id="instructions" class="card-body collapse">
                   <h2 class="mb-4">UVMOD Конфигуратор</h2>
-                  <p>Этот инструмент позволяет вам редактировать настройки и каналы вашей рации с комфортом вашего веб
-                    браузера. Он служит платформонезависимой заменой официального ПО CPS. </p>
+                  <p>Этот инструмент позволяет вам считывать и записывать настройки вашей рации с комфортом вашего веб
+                    браузера. Он служит платформонезависимой заменой k5prog. </p>
 
                   <h3 class="mt-4">Использование</h3>
                   <p>На данный момент конфигуратор в разработке. Сейчас он может лишь прочитать конфигурацию рации
-                    и сохранить её резервную копию. Резервная копия *должна* быть совместима с k5prog, но пока
-                    это не проверялось, потому, пожалуйста, не пытайтесь записывать такую резервную копию в какую либо рацию. </p>
+                    и сохранить её резервную копию. Резервная копия *должна* быть совместима с k5prog. </p>
 
                 </div>
 
@@ -203,14 +202,13 @@
                         </div>
                       </div>
                       <label for="automaticBackupCheckbox" class="form-control" readonly style="cursor: pointer;">Включить
-                        автосохранение резервной копии</label>
+                        скачивание резервной копии</label>
                     </div>
                   </div>
                   <div class="custom-file mt-2">
-                    <input id="backupFileInput" type="file" class="custom-file-input" accept=".bin">
-                    <label id="backupFileLabel" class="custom-file-label" for="backupFileInput">Импортировать резервную копию</label>
+                    <input id="backupConfigFileInput" type="file" class="custom-file-input" accept=".bin">
+                    <label id="backupConfigFileLabel" class="custom-file-label" for="backupConfigFileInput">Импортировать конфигурацию</label>
                   </div>
-
                   <div class="mt-2 d-flex">
                     <a id="readConfigButton" class="btn btn-dark btn-icon-split mr-1 w-100">
                       <span class="icon text-white-50">
@@ -223,6 +221,24 @@
                         <i class="fas fa-sign-in-alt"></i>
                       </span>
                       <span class="text w-100">Записать конфигурацию</span>
+                    </a>
+                  </div>
+                  <div class="custom-file mt-2">
+                    <input id="backupCalibFileInput" type="file" class="custom-file-input" accept=".bin">
+                    <label id="backupCalibFileLabel" class="custom-file-label" for="backupCalibFileInput">Импортировать калибровку</label>
+                  </div>
+                  <div class="mt-2 d-flex">
+                    <a id="readCalibButton" class="btn btn-dark btn-icon-split mr-1 w-100">
+                      <span class="icon text-white-50">
+                        <i class="fas fa-sign-out-alt"></i>
+                      </span>
+                      <span class="text w-100">Прочитать калибровку</span>
+                    </a>
+                    <a id="writeCalibButton" class="btn btn-dark btn-icon-split disabled w-100">
+                      <span class="icon text-white-50">
+                        <i class="fas fa-sign-in-alt"></i>
+                      </span>
+                      <span class="text w-100">Записать каклибровку</span>
                     </a>
                   </div>
                 </div>
