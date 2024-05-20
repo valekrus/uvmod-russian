@@ -83,7 +83,7 @@ document.getElementById('patchButton').addEventListener('click', function () {
             log(`Modified firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
 
             // Apply mods to unpacked firmware
-            const patched_firmware = applyMods(unpacked_firmware);
+            const patched_firmware = applyFWMods(unpacked_firmware);
 
             // Save raw firmware for qsflash.js
             rawFirmware = patched_firmware;
@@ -262,4 +262,4 @@ flashButton.addEventListener('click', async function () {
 });
 
 
-modLoader(); // loads and shows all mods from mods.js
+FWModLoader(); // loads and shows all mods from mods.js

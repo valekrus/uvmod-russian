@@ -1,15 +1,21 @@
 // the configurator tool works very similar to the patcher, where individual config sections are treated by mod-like instances with a read and write function
 
+const patchConfigButton = document.getElementById('patchConfigButton');
 const readConfigButton = document.getElementById('readConfigButton');
 const writeConfigButton = document.getElementById('writeConfigButton');
+const patchCalibButton = document.getElementById('patchCalibButton');
 const readCalibButton = document.getElementById('readCalibButton');
 const writeCalibButton = document.getElementById('writeCalibButton');
 const configContainer = document.getElementById('configContainer');
-const automaticBackupCheckbox = document.getElementById('automaticBackupCheckbox');
+const automaticConfigBackupCheckbox = document.getElementById('automaticConfigBackupCheckbox');
+const automaticCalibBackupCheckbox = document.getElementById('automaticCalibBackupCheckbox');
 const backupConfigFileInput = document.getElementById('backupConfigFileInput');
 const backupConfigFileLabel = document.getElementById('backupConfigFileLabel');
 const backupCalibFileInput = document.getElementById('backupCalibFileInput');
 const backupCalibFileLabel = document.getElementById('backupCalibFileLabel');
+const downloadConfigButton = document.getElementById('downloadConfigButton');
+const downloadCalibButton = document.getElementById('downloadCalibButton');
+
 
 let rawCONFIG = new Uint8Array(0x2000);
 let rawCALIB = new Uint8Array(0x200);
@@ -31,7 +37,7 @@ async function eeprom_init(port) {
     log(`Version: ${decoder.decode(version.slice(0, version.indexOf(0)))}`);
     log(`Has custom AES key: ${customAES}`);
     log(`Is in lock screen: ${inLockScreen}`);
-    log(`Challenge: ${uint8ArrayToHexString(challenge)}`);
+    log(`Challenge: ${uint8ArrayToHexString(challenge, ' ')}`);
 }
 
 async function eeprom_read(port, address, size = 0x80) {
@@ -135,7 +141,22 @@ async function eeprom_flashCalib(port, calib) {
     return Promise.resolve();
 }
 
+function eeprom_download(data, fileName) {
+    const blob = new Blob([data], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 function loadCONFIG(loaded_config) {
+    writeConfigButton.classList.add('disabled');
+    downloadConfigButton.classList.add('disabled');
+
     rawCONFIG = loaded_config;
     // Check size
     const current_size = rawCONFIG.length;
@@ -147,10 +168,19 @@ function loadCONFIG(loaded_config) {
         return;
     }
 
+    ConfigModLoader(rawCONFIG); // loads and shows all mods from configs.js
+
+    patchConfigButton.classList.remove('disabled');
     writeConfigButton.classList.remove('disabled');
+    downloadConfigButton.classList.remove('disabled');
+    loadCALIB(rawCONFIG.slice(0x1E00, 0x1E00 + 0x200));
+    backupCalibFileLabel.textContent = 'config_calibration_data.bin';
 }
 
 function loadCALIB(loaded_calib) {
+    writeCalibButton.classList.add('disabled');
+    downloadCalibButton.classList.add('disabled');
+
     rawCALIB = loaded_calib;
     // Check size
     const current_size = rawCALIB.length;
@@ -162,7 +192,11 @@ function loadCALIB(loaded_calib) {
         return;
     }
 
+    CalibModLoader(rawCALIB); // loads and shows all mods from calibs.js
+
+    patchCalibButton.classList.remove('disabled');
     writeCalibButton.classList.remove('disabled');
+    downloadCalibButton.classList.remove('disabled');
 }
 
 readConfigButton.addEventListener('click', async function () {
@@ -193,19 +227,12 @@ readConfigButton.addEventListener('click', async function () {
         loadCONFIG(readCONFIG);
         log('Configuration read successfully.');
         backupConfigFileLabel.textContent = 'read_configuration_data.bin';
+        backupCalibFileLabel.textContent = 'read_calibration_data.bin';
         
         // save to file if backup is enabled
-        if (automaticBackupCheckbox.checked) {
+        if (automaticConfigBackupCheckbox.checked) {
             log('Saving backup file...');
-            const blob = new Blob([readCONFIG], { type: 'application/octet-stream' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'uvmod_configuration_backup.bin';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            eeprom_download(readCONFIG, 'uvmod_configuration_backup.bin');
         }
 
     } catch (error) {
@@ -319,17 +346,9 @@ readCalibButton.addEventListener('click', async function () {
         backupCalibFileLabel.textContent = 'read_calibration_data.bin';
         
         // save to file if backup is enabled
-        if (automaticBackupCheckbox.checked) {
+        if (automaticCalibBackupCheckbox.checked) {
             log('Saving backup file...');
-            const blob = new Blob([readCALIB], { type: 'application/octet-stream' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'uvmod_calibration_backup.bin';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            eeprom_download(readCALIB, 'uvmod_calibration_backup.bin');
         }
 
     } catch (error) {
@@ -410,6 +429,30 @@ backupCalibFileInput.addEventListener('change', function () {
                 log("Error while loading calibration data file, check log above or developer console for details.");
             });
     }
+});
+
+patchCalibButton.addEventListener('click', function () {
+    patchCalibButton.classList.add('disabled');
+    readCalibButton.classList.add('disabled');
+    writeCalibButton.classList.add('disabled');
+    downloadCalibButton.classList.add('disabled');
+
+    log("");
+    const patched_calibData = applyCalibMods(rawCALIB);
+    loadCALIB(patched_calibData);
+
+    log("");
+    log("Now you can flash new calibration data to your radio!");
+    patchCalibButton.classList.remove('disabled');
+    readCalibButton.classList.remove('disabled');
+});
+
+downloadConfigButton.addEventListener('click', function () {
+    eeprom_download(rawCONFIG, backupConfigFileLabel.textContent);
+});
+
+downloadCalibButton.addEventListener('click', function () {
+    eeprom_download(rawCALIB, backupCalibFileLabel.textContent);
 });
 
 // initialize configurator

@@ -1,3 +1,5 @@
+var showHidden = false;
+
 class FirmwareMod {
   constructor(name, description, size) {
     this.name = name;
@@ -16,12 +18,15 @@ class FirmwareMod {
   }
 }
 
-function addModToUI(mod, modDiv) {
+function addFWModToUI(mod, modDiv) {
   // Create a card div
   const card = document.createElement("div");
   card.classList.add("card", "mb-3", "border-left-primary", "border-left-secondary");
   if (mod.hidden) {
-    card.classList.add("hiddenMod", "d-none", "border-danger", "border-left-danger");
+    card.classList.add("hiddenMod", "border-danger", "border-left-danger");
+    if(! showHidden) {
+        card.classList.add("d-none");
+    }
   }
 
   // Create a card body div
@@ -98,26 +103,16 @@ function addModToUI(mod, modDiv) {
 }
 
 
-function showHiddenMods() {
-  const hiddenMods = document.getElementsByClassName("hiddenMod");
-  for (const mod of hiddenMods) {
-    mod.classList.remove("d-none");
-  }
-  log("Hidden mods shown. Please pay extra attention when using them.");
-}
+var FWModClasses = []; // Will be populated in mods.js
+var FWModInstances = [];
 
-
-
-var modClasses = []; // Will be populated in mods.js
-var modInstances = [];
-
-function modLoader() {
-  modClasses.forEach(ModClass => {
-    const modInstance = new ModClass();
-    modInstances.push(modInstance); // Add the instance to the array
-    const modDiv = document.createElement("div");
-    addModToUI(modInstance, modDiv);
-    document.getElementById("modsContainer").appendChild(modDiv);
+function FWModLoader() {
+  FWModClasses.forEach(FWModClass => {
+    const FWModInstance = new FWModClass();
+    FWModInstances.push(FWModInstance); // Add the instance to the array
+    const FWModDiv = document.createElement("div");
+    addFWModToUI(FWModInstance, FWModDiv);
+    document.getElementById("modsContainer").appendChild(FWModDiv);
   });
   log("Patcher ready.");
 
@@ -126,18 +121,312 @@ function modLoader() {
     showHiddenMods();
   }
 
-  return modInstances; // Return the array of mod instances
+  return FWModInstances; // Return the array of mod instances
 }
 
 
-function applyMods(firmware) {
-  for (const modInstance of modInstances) {
-    if (modInstance.enabled) {
-      firmware = modInstance.apply(firmware);
+function applyFWMods(firmware) {
+  for (const FWModInstance of FWModInstances) {
+    if (FWModInstance.enabled) {
+      firmware = FWModInstance.apply(firmware);
     }
   }
   log("Finished applying mods...");
   return firmware;
+}
+
+class ConfigMod {
+  constructor(name, description) {
+    this.name = name;
+    this.description = description;
+    this.enabled = false; // Checkbox status, initially disabled
+    this.hidden = false; // If true, the mod will be hidden until activated in the instructions panel. Use this for risky mods. 
+    this.error = false; // If true, the mod cannot be enabled, becouse it has errors, while loading current config data.
+    this.modSpecificDiv = document.createElement("div"); // Div for mod-specific inputs
+    // If needed, create input fields here and append them to the modSpecificDiv
+  }
+
+  apply(configData) {
+    // This method should be overridden in each mod implementation
+    // It should apply the mod on the configData and return the modified configData
+    return configData;
+  }
+
+  load(configData) {
+    // This method should be overridden in each mod implementation
+    // It should load its settings, based on the configData
+    // set this.error to true and return false if there was errors
+    // while loading or return true if there was no erros.
+    return true;
+  }
+}
+
+function addConfigModToUI(mod, modDiv) {
+  // Create a card div
+  const card = document.createElement("div");
+  card.classList.add("card", "mb-3", "border-left-primary", "border-left-secondary");
+  if (mod.hidden) {
+    card.classList.add("hiddenMod", "border-warning", "border-left-warning");
+    if(! showHidden) {
+        card.classList.add("d-none");
+    }
+  }
+
+  // Create a card body div
+  const cardBody = document.createElement("div");
+  cardBody.classList.add("card-body");
+
+  // Create a row div
+  const row = document.createElement("div");
+  row.classList.add("row");
+
+  // Create checkbox column
+  const checkboxCol = document.createElement("div");
+  checkboxCol.classList.add("col-auto");
+
+  // Create checkbox for enabling the mod
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.style.height = "1.45rem"; 
+  checkbox.style.width = "1.45rem";
+  if (mod.error) {
+    checkbox.disabled = true;
+    checkbox.checked = false;
+  } else {
+    checkbox.checked = mod.enabled;
+  
+    checkbox.addEventListener("change", function () {
+      mod.enabled = checkbox.checked;
+      if (checkbox.checked) {
+        card.classList.remove("border-left-secondary");
+      } else {
+        card.classList.add("border-left-secondary");
+      }
+    });
+  }
+  checkboxCol.appendChild(checkbox);
+  
+
+  // Create name column
+  const nameCol = document.createElement("div");
+  nameCol.classList.add("col-auto", "mr-auto", "pl-1");
+  if (mod.error) {
+    nameCol.classList.add("text-danger");
+  } else if (mod.hidden) {
+    nameCol.classList.add("text-warning");
+  }
+
+  const nameText = document.createElement("h5");
+  nameText.textContent = mod.name;
+  nameCol.appendChild(nameText);
+
+  // Add columns to the row
+  row.appendChild(checkboxCol);
+  row.appendChild(nameCol);
+
+    // Create description column
+    const descCol = document.createElement("div");
+    //descCol.classList.add("col");
+  
+    const descriptionText = document.createElement("p");
+    descriptionText.textContent = mod.description;
+    descCol.appendChild(descriptionText);
+
+  // Add the mod-specific div for custom inputs
+  cardBody.appendChild(row);
+  cardBody.appendChild(descCol);
+  cardBody.appendChild(mod.modSpecificDiv);
+
+
+  // Add card body to the card div
+  card.appendChild(cardBody);
+
+  // Add the card to the modDiv
+  modDiv.appendChild(card);
+}
+
+
+var ConfigModClasses = []; // Will be populated in mods.js
+var ConfigModInstances = [];
+
+function ConfigModLoader(configData) {
+  ConfigModInstances = [];
+  document.getElementById("configContainer").replaceChildren();
+
+  ConfigModClasses.forEach(ConfigModClass => {
+    const ConfigModInstance = new ConfigModClass();
+    ConfigModInstances.push(ConfigModInstance); // Add the instance to the array
+    ConfigModInstance.load(configData);
+    const ConfigModDiv = document.createElement("div");
+    addConfigModToUI(ConfigModInstance, ConfigModDiv);
+    document.getElementById("configContainer").appendChild(ConfigModDiv);
+  });
+  log("Configuration data patcher ready.");
+
+  // for development purposes, add ?hidden to the url to always show hidden mods
+  if (window.location.href.indexOf("?hidden") > -1) {
+    showHiddenMods();
+  }
+
+  return ConfigModInstances; // Return the array of mod instances
+}
+
+
+function applyConfigMods(configuration) {
+  for (const ConfigModInstance of ConfigModInstances) {
+    if (ConfigModInstance.enabled) {
+      configuration = ConfigModInstance.apply(configuration);
+    }
+  }
+  log("Finished applying configuration mods...");
+  return configuration;
+}
+
+class CalibMod {
+  constructor(name, description) {
+    this.name = name;
+    this.description = description;
+    this.enabled = false; // Checkbox status, initially disabled
+    this.hidden = false; // If true, the mod will be hidden until activated in the instructions panel. Use this for risky mods. 
+    this.error = false; // If true, the mod cannot be enabled, becouse it has errors, while loading current calibration data.
+    this.modSpecificDiv = document.createElement("div"); // Div for mod-specific inputs
+    // If needed, create input fields here and append them to the modSpecificDiv
+  }
+
+  apply(calibData) {
+    // This method should be overridden in each mod implementation
+    // It should apply the mod on the firmwareData and return the modified firmwareData
+    return calibData;
+  }
+
+  load(calibData) {
+    // This method should be overridden in each mod implementation
+    // It should load its settings, based on the firmwareData
+    // set this.error to true and return false if there was errors
+    // while loading or return true if there was no erros.
+    return true;
+  }
+}
+
+function addCalibModToUI(mod, modDiv) {
+  // Create a card div
+  const card = document.createElement("div");
+  card.classList.add("card", "mb-3", "border-left-primary", "border-left-secondary");
+  if (mod.hidden) {
+    card.classList.add("hiddenMod", "border-warning", "border-left-warning");
+    if(! showHidden) {
+        card.classList.add("d-none");
+    }
+  }
+
+  // Create a card body div
+  const cardBody = document.createElement("div");
+  cardBody.classList.add("card-body");
+
+  // Create a row div
+  const row = document.createElement("div");
+  row.classList.add("row");
+
+  // Create checkbox column
+  const checkboxCol = document.createElement("div");
+  checkboxCol.classList.add("col-auto");
+
+  // Create checkbox for enabling the mod
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.style.height = "1.45rem"; 
+  checkbox.style.width = "1.45rem";
+  if (mod.error) {
+    checkbox.disabled = true;
+    checkbox.checked = false;
+  } else {
+    checkbox.checked = mod.enabled;
+  
+    checkbox.addEventListener("change", function () {
+      mod.enabled = checkbox.checked;
+      if (checkbox.checked) {
+        card.classList.remove("border-left-secondary");
+      } else {
+        card.classList.add("border-left-secondary");
+      }
+    });
+  }
+  checkboxCol.appendChild(checkbox);
+  
+
+  // Create name column
+  const nameCol = document.createElement("div");
+  nameCol.classList.add("col-auto", "mr-auto", "pl-1");
+  if (mod.error) {
+    nameCol.classList.add("text-danger");
+  } else if (mod.hidden) {
+    nameCol.classList.add("text-warning");
+  }
+
+  const nameText = document.createElement("h5");
+  nameText.textContent = mod.name;
+  nameCol.appendChild(nameText);
+
+  // Add columns to the row
+  row.appendChild(checkboxCol);
+  row.appendChild(nameCol);
+
+    // Create description column
+    const descCol = document.createElement("div");
+    //descCol.classList.add("col");
+  
+    const descriptionText = document.createElement("p");
+    descriptionText.textContent = mod.description;
+    descCol.appendChild(descriptionText);
+
+  // Add the mod-specific div for custom inputs
+  cardBody.appendChild(row);
+  cardBody.appendChild(descCol);
+  cardBody.appendChild(mod.modSpecificDiv);
+
+
+  // Add card body to the card div
+  card.appendChild(cardBody);
+
+  // Add the card to the modDiv
+  modDiv.appendChild(card);
+}
+
+
+var CalibModClasses = []; // Will be populated in mods.js
+var CalibModInstances = [];
+
+function CalibModLoader(calibData) {
+  CalibModInstances = [];
+  document.getElementById("calibContainer").replaceChildren();
+
+  CalibModClasses.forEach(CalibModClass => {
+    const CalibModInstance = new CalibModClass();
+    CalibModInstances.push(CalibModInstance); // Add the instance to the array
+    CalibModInstance.load(calibData);
+    const CalibModDiv = document.createElement("div");
+    addCalibModToUI(CalibModInstance, CalibModDiv);
+    document.getElementById("calibContainer").appendChild(CalibModDiv);
+  });
+  log("Calibration data patcher ready.");
+
+  // for development purposes, add ?hidden to the url to always show hidden mods
+  if (window.location.href.indexOf("?hidden") > -1) {
+    showHiddenMods();
+  }
+
+  return CalibModInstances; // Return the array of mod instances
+}
+
+
+function applyCalibMods(calibration) {
+  for (const CalibModInstance of CalibModInstances) {
+    if (CalibModInstance.enabled) {
+      calibration = CalibModInstance.apply(calibration);
+    }
+  }
+  log("Finished applying calibration mods...");
+  return calibration;
 }
 
 function log(message, replace = false) {
@@ -163,6 +452,14 @@ function log(message, replace = false) {
   consoleArea.scrollTop = consoleArea.scrollHeight;
 }
 
+function showHiddenMods() {
+  const hiddenMods = document.getElementsByClassName("hiddenMod");
+  for (const mod of hiddenMods) {
+    mod.classList.remove("d-none");
+  }
+  showHidden = true;
+  log("Hidden mods shown. Please pay extra attention when using them.");
+}
 
 
 // Helper functions:
@@ -188,15 +485,15 @@ function hexString(hexString) {
 }
 
 /**
- * Converts a Uint8Array to a hexadecimal string, mostly for debugging purposes.
+ * Converts a Uint8Array to a hexadecimal string
  *
  * @param {Uint8Array} uint8Array - The Uint8Array to convert.
  * @returns {string} The hexadecimal representation of the Uint8Array without separators. 
  */
-function uint8ArrayToHexString(uint8Array) {
+function uint8ArrayToHexString(uint8Array, separators = '') {
   return Array.from(uint8Array)
     .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
+    .join(separators);
 }
 
 

@@ -1,4 +1,4 @@
-modClasses = [
+FWModClasses = [
 /*
     class Mod_Example extends FirmwareMod {
         constructor() {

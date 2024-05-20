@@ -159,6 +159,21 @@
                     и сохранить её резервную копию. Резервная копия *должна* быть совместима с k5prog.  Для работы рация
                     НЕ должна быть в режиме прошивки.</p>
 
+                  <h3 class="mt-4">Калибровка</h3>
+                  <p>Калибровки для рации, на данный момент, лучше делать в соответствии с инструкциями в видео, которые
+                  есть на YuoTube. Данный инструмент лишь упрощает их внесение в файл калибровок и прошивку в рацию.</p>
+                  <p>Неправильная калибровка коэффициентов, отвечающих за мощность передачи на разных диапазонах, а также
+                  необдуманное изменение некоторых калибровок могут привести к выходу рации из строя и/или её неправильной
+                  работе, а также созданию помех на частотах вне разрешённых диапазонов. Аппаратная начинка радиостанции
+                  настроена только на диапазоны VHF и UHF. Никакая программная калибровка не изменит аппаратную конфигурацию
+                  радиостанции. На частотах вне диапазонов VHF и UHF, рация работает с крайне малой мощностью и большим КСВ,
+                  что может привести к повреждению рации. Что ещё хуже, рация будет выдавать множество гармоник на соседних
+                  частотах, причём сигнал на них будет даже сильнее, чем на выбранной частоте.</p>
+                  <p>ВЫ и только ВЫ несёте ответственность за свои дейстия!</p>
+                  <p>Если вы понимаете и согласны с вышеуказанным, вы можете отобразить скрытые моды
+                     <a onclick="showHiddenMods()" class="card-link" style="cursor: pointer;"><b>нажав здесь.</b></a>
+                  </p>
+                  <p>Моды отобразятся в общем списке с оранжевой рамкой и заголовком.</p>
                 </div>
 
               </div>
@@ -171,12 +186,17 @@
             <div class="col mb-4">
               <!-- Mods -->
               <div class="card shadow-lg mb-4">
-                <div class="card-header py-3 d-flex">
-                  <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Конфигурация</h6>
-                  </div>
+                <a href="#configContainer" class="d-block card-header py-3" data-toggle="collapse" role="button">
+                  <h6 class="m-0 font-weight-bold text-primary">Конфигурация</h6>
+                </a>
+                <div id="configContainer" class="card-body collapse show">
                 </div>
-                <div id="configContainer" class="card-body">
+              </div>
+              <div class="card shadow-lg mb-4">
+                <a href="#calibContainer" class="d-block card-header py-3" data-toggle="collapse" role="button">
+                  <h6 class="m-0 font-weight-bold text-primary">Калибровки</h6>
+                </a>
+                <div id="calibContainer" class="card-body collapse show">
                 </div>
               </div>
             </div>
@@ -190,57 +210,118 @@
                   </div>
                 </div>
                 <div class="card-body">
-                  <div>
+                  <div class="mb-3">
                     <div class="d-flex justify-content-center">
                       <textarea id="console" class="w-100 form-control" style="height: 10em;" readonly></textarea>
                     </div>
                   </div>
-                  <div>
-                    <div class="input-group mt-4">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">
-                          <input id="automaticBackupCheckbox" style="cursor: pointer;" type="checkbox" checked>
+                  <div class="card mb-3 border-right-primary border-right-secondary">
+                    <div class="card-header py-3 d-flex">
+                      <div class="mr-auto">
+                        <h6 class="m-0 font-weight-bold text-primary">Конфигурация</h6>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="mt-2">
+                        <a id="patchConfigButton" class="btn btn-primary btn-icon-split disabled w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-wrench"></i>
+                          </span>
+                          <span class="text w-100">Применить изменения</span>
+                        </a>
+                      </div>
+                      <div>
+                        <div class="input-group mt-4">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text">
+                              <input id="automaticConfigBackupCheckbox" style="cursor: pointer;" type="checkbox" checked>
+                            </div>
+                          </div>
+                          <label for="automaticConfigBackupCheckbox" class="form-control" readonly style="cursor: pointer;">Скачивать
+                            при чтении</label>
                         </div>
                       </div>
-                      <label for="automaticBackupCheckbox" class="form-control" readonly style="cursor: pointer;">Включить
-                        скачивание резервной копии</label>
+                      <div class="custom-file mt-2">
+                        <input id="backupConfigFileInput" type="file" class="custom-file-input" accept=".bin">
+                        <label id="backupConfigFileLabel" class="custom-file-label" for="backupConfigFileInput">Импортировать</label>
+                      </div>
+                      <div class="mt-2">
+                        <a id="downloadConfigButton" class="btn btn-dark btn-icon-split mr-1 disabled w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-download"></i>
+                          </span>
+                          <span class="text w-100">Скачать</span>
+                        </a>
+                      </div>
+                      <div class="mt-2 d-flex">
+                        <a id="readConfigButton" class="btn btn-dark btn-icon-split mr-1 w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-sign-out-alt"></i>
+                          </span>
+                          <span class="text w-100">Прочитать</span>
+                        </a>
+                        <a id="writeConfigButton" class="btn btn-dark btn-icon-split disabled w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-sign-in-alt"></i>
+                          </span>
+                          <span class="text w-100">Записать</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
-                  <div class="custom-file mt-2">
-                    <input id="backupConfigFileInput" type="file" class="custom-file-input" accept=".bin">
-                    <label id="backupConfigFileLabel" class="custom-file-label" for="backupConfigFileInput">Импортировать конфигурацию</label>
-                  </div>
-                  <div class="mt-2 d-flex">
-                    <a id="readConfigButton" class="btn btn-dark btn-icon-split mr-1 w-100">
-                      <span class="icon text-white-50">
-                        <i class="fas fa-sign-out-alt"></i>
-                      </span>
-                      <span class="text w-100">Прочитать конфигурацию</span>
-                    </a>
-                    <a id="writeConfigButton" class="btn btn-dark btn-icon-split disabled w-100">
-                      <span class="icon text-white-50">
-                        <i class="fas fa-sign-in-alt"></i>
-                      </span>
-                      <span class="text w-100">Записать конфигурацию</span>
-                    </a>
-                  </div>
-                  <div class="custom-file mt-2">
-                    <input id="backupCalibFileInput" type="file" class="custom-file-input" accept=".bin">
-                    <label id="backupCalibFileLabel" class="custom-file-label" for="backupCalibFileInput">Импортировать калибровку</label>
-                  </div>
-                  <div class="mt-2 d-flex">
-                    <a id="readCalibButton" class="btn btn-dark btn-icon-split mr-1 w-100">
-                      <span class="icon text-white-50">
-                        <i class="fas fa-sign-out-alt"></i>
-                      </span>
-                      <span class="text w-100">Прочитать калибровку</span>
-                    </a>
-                    <a id="writeCalibButton" class="btn btn-dark btn-icon-split disabled w-100">
-                      <span class="icon text-white-50">
-                        <i class="fas fa-sign-in-alt"></i>
-                      </span>
-                      <span class="text w-100">Записать калибровку</span>
-                    </a>
+                  <div class="card mb-3 border-right-primary border-right-secondary">
+                    <div class="card-header py-3 d-flex">
+                      <div class="mr-auto">
+                        <h6 class="m-0 font-weight-bold text-primary">Калибровки</h6>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="mt-2">
+                        <a id="patchCalibButton" class="btn btn-primary btn-icon-split disabled w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-wrench"></i>
+                          </span>
+                          <span class="text w-100">Применить изменения</span>
+                        </a>
+                      </div>
+                      <div>
+                        <div class="input-group mt-4">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text">
+                              <input id="automaticCalibBackupCheckbox" style="cursor: pointer;" type="checkbox" checked>
+                            </div>
+                          </div>
+                          <label for="automaticCalibBackupCheckbox" class="form-control" readonly style="cursor: pointer;">Скачивать
+                            при чтении</label>
+                        </div>
+                      </div>
+                      <div class="custom-file mt-2">
+                        <input id="backupCalibFileInput" type="file" class="custom-file-input" accept=".bin">
+                        <label id="backupCalibFileLabel" class="custom-file-label" for="backupCalibFileInput">Импортировать</label>
+                      </div>
+                      <div class="mt-2">
+                        <a id="downloadCalibButton" class="btn btn-dark btn-icon-split mr-1 disabled w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-download"></i>
+                          </span>
+                          <span class="text w-100">Скачать</span>
+                        </a>
+                      </div>
+                      <div class="mt-2 d-flex">
+                        <a id="readCalibButton" class="btn btn-dark btn-icon-split mr-1 w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-sign-out-alt"></i>
+                          </span>
+                          <span class="text w-100">Прочитать</span>
+                        </a>
+                        <a id="writeCalibButton" class="btn btn-dark btn-icon-split disabled w-100">
+                          <span class="icon text-white-50">
+                            <i class="fas fa-sign-in-alt"></i>
+                          </span>
+                          <span class="text w-100">Записать</span>
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -274,7 +355,8 @@
   <script src="js/fwpack.js"></script>
   <script src="js/qsSerial.js"></script>
   <script src="js/modframework.js"></script>
-  <script src="mods.js"></script>
+  <script src="configs.js"></script>
+  <script src="calibs.js"></script>
   <script src="js/tool_configurator.js"></script>
 
   <!-- Easter egg, click the title -->
